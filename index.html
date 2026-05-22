@@ -620,6 +620,21 @@
         #previewWrap tr.p-tip  td { background: #DCFCE7; color: #14532D; font-weight: 600; }
         #previewWrap tr.p-tot  td { background: #4F46E5; color: #fff; font-weight: 800; font-size: 0.95rem; }
 
+        /* ─────────────── TOGGLE ALL/MANUAL ─────────────── */
+        .scope-toggle {
+            display: inline-flex; border-radius: 999px;
+            border: 1px solid var(--border); overflow: hidden;
+            background: var(--bg-2);
+        }
+        .scope-btn {
+            padding: 4px 12px; font-size: 0.72rem; font-weight: 600;
+            border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+            background: transparent; color: var(--text-muted);
+            transition: all .15s;
+        }
+        .scope-btn.active-all  { background: var(--primary); color: #fff; }
+        .scope-btn.active-manual { background: var(--surface-3); color: var(--text); }
+
         /* ─────────────── IMPORT MODAL ─────────────── */
         .prompt-box {
             background: var(--bg-2);
@@ -896,16 +911,22 @@
             <div class="cfg-group disc">
                 <div class="cfg-label"><svg><use href="#i-tag"/></svg> Descuento</div>
                 <div class="cfg-input-wrap">
-                    <input type="number" id="inDiscount" placeholder="0" min="0" max="100" step="0.1" oninput="renderAll()">
+                    <input type="number" id="inDiscount" placeholder="0" min="0" max="100" step="0.1" oninput="onDiscPctChange()">
                 </div>
-                <span class="cfg-hint">sobre ítems marcados</span>
+                <div class="scope-toggle">
+                    <button class="scope-btn active-all" id="discScopeAll"    onclick="setDiscScope('all')">Todos</button>
+                    <button class="scope-btn"            id="discScopeManual" onclick="setDiscScope('manual')">Manual</button>
+                </div>
             </div>
             <div class="cfg-group tip">
                 <div class="cfg-label"><svg><use href="#i-handshake"/></svg> Propina</div>
                 <div class="cfg-input-wrap">
-                    <input type="number" id="inTip" placeholder="10" min="0" max="100" step="0.1" oninput="renderAll()">
+                    <input type="number" id="inTip" placeholder="10" min="0" max="100" step="0.1" oninput="onTipPctChange()">
                 </div>
-                <span class="cfg-hint">sobre ítems marcados</span>
+                <div class="scope-toggle">
+                    <button class="scope-btn active-all" id="tipScopeAll"    onclick="setTipScope('all')">Todos</button>
+                    <button class="scope-btn"            id="tipScopeManual" onclick="setTipScope('manual')">Manual</button>
+                </div>
                 <button id="tipToggleBtn" class="toggle-pill" onclick="toggleTipBase()" style="display:none">
                     <span id="tipToggleLabel">sobre precio c/ descuento</span>
                 </button>
@@ -1022,6 +1043,38 @@ Formato exacto:
 let people = [];
 let items  = [];
 let tipAfterDiscount = true;
+let discScope = 'all';   // 'all' | 'manual'
+let tipScope  = 'all';   // 'all' | 'manual'
+
+function setDiscScope(scope) {
+    discScope = scope;
+    document.getElementById('discScopeAll').className    = 'scope-btn' + (scope === 'all'    ? ' active-all' : '');
+    document.getElementById('discScopeManual').className = 'scope-btn' + (scope === 'manual' ? ' active-manual' : '');
+    if (scope === 'all') {
+        items.forEach(i => i.applyDiscount = discPct() > 0);
+    }
+    renderAll();
+}
+
+function setTipScope(scope) {
+    tipScope = scope;
+    document.getElementById('tipScopeAll').className    = 'scope-btn' + (scope === 'all'    ? ' active-all' : '');
+    document.getElementById('tipScopeManual').className = 'scope-btn' + (scope === 'manual' ? ' active-manual' : '');
+    if (scope === 'all') {
+        items.forEach(i => i.applyTip = tipPct() > 0);
+    }
+    renderAll();
+}
+
+function onDiscPctChange() {
+    if (discScope === 'all') items.forEach(i => i.applyDiscount = discPct() > 0);
+    renderAll();
+}
+
+function onTipPctChange() {
+    if (tipScope === 'all') items.forEach(i => i.applyTip = tipPct() > 0);
+    renderAll();
+}
 
 const discPct = () => parseFloat(document.getElementById('inDiscount').value) || 0;
 const tipPct  = () => parseFloat(document.getElementById('inTip').value)      || 0;
@@ -1108,7 +1161,7 @@ function addItem() {
     } else {
         const pQty = {};
         people.forEach(p => pQty[p] = 0);
-        items.push({ id: Date.now(), name, price: price * qty, unitPrice: price, units: qty, qty: pQty, applyDiscount:false, applyTip:false });
+        items.push({ id: Date.now(), name, price: price * qty, unitPrice: price, units: qty, qty: pQty, applyDiscount: discScope === 'all' && discPct() > 0, applyTip: tipScope === 'all' && tipPct() > 0 });
     }
 
     iInp.value = ''; pInp.value = ''; qInp.value = '1';
@@ -1247,13 +1300,15 @@ function renderItems() {
             </div>
         `).join('');
 
-        const flags = (hasDisc || hasTip) ? `
+        const showDiscChip = hasDisc && discScope === 'manual';
+        const showTipChip  = hasTip  && tipScope  === 'manual';
+        const flags = (showDiscChip || showTipChip) ? `
             <div class="item-flags">
-                ${hasDisc ? `<label class="flag-chip disc ${item.applyDiscount?'active':''}">
+                ${showDiscChip ? `<label class="flag-chip disc ${item.applyDiscount?'active':''}">
                     <input type="checkbox" ${item.applyDiscount?'checked':''} onchange="toggleDiscount(${item.id},this.checked)">
                     <svg><use href="#i-tag"/></svg> Descuento
                 </label>` : ''}
-                ${hasTip ? `<label class="flag-chip tip ${item.applyTip?'active':''}">
+                ${showTipChip ? `<label class="flag-chip tip ${item.applyTip?'active':''}">
                     <input type="checkbox" ${item.applyTip?'checked':''} onchange="toggleTip(${item.id},this.checked)">
                     <svg><use href="#i-handshake"/></svg> Propina
                 </label>` : ''}
@@ -1712,7 +1767,7 @@ function doImport() {
         } else {
             const qty = {};
             people.forEach(p => qty[p] = 0);
-            items.push({ id: Date.now() + Math.random(), name: nombre, price: precio * cant, unitPrice: precio, units: cant, qty, applyDiscount: false, applyTip: false });
+            items.push({ id: Date.now() + Math.random(), name: nombre, price: precio * cant, unitPrice: precio, units: cant, qty, applyDiscount: discScope === 'all' && discPct() > 0, applyTip: tipScope === 'all' && tipPct() > 0 });
         }
         imported++;
     });
