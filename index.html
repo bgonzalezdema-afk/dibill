@@ -1029,7 +1029,7 @@ Formato exacto:
         <div id="previewWrap"></div>
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="downloadImage()">
-                <svg><use href="#i-image"/></svg> Imagen
+                <svg><use href="#i-clipboard"/></svg> Copiar imagen
             </button>
             <button class="btn btn-green" onclick="copyWhatsapp()">
                 <svg><use href="#i-message"/></svg> WhatsApp
@@ -1489,156 +1489,166 @@ function downloadImage() {
     const discItems = items.filter(i => i.applyDiscount);
     const tipItems  = items.filter(i => i.applyTip);
 
-    // ── layout ──
-    const scale    = 2;
-    const W        = 640;
-    const padX     = 28;
-    const colW     = 120;
-    const nameColW = W - padX * 2 - colW - people.length * colW;
-    const rowH     = 38;
-    const headH    = 48;
-    const fontSize = 13;
+    const scale  = 2;
+    const padX   = 32;
+    const padY   = 28;
+    const rowH   = 36;
+    const headH  = 44;
+    const fontSize = 12;
+    const headerFontSize = 10;
 
-    // contar filas: items + subtotal + desc? + tip? + total
-    const extraRows = 1 + (d > 0 && discItems.length > 0 ? 1 : 0) + (t > 0 && tipItems.length > 0 ? 1 : 0) + 1;
-    const totalRows = items.length + extraRows;
-    const H = 56 + headH + totalRows * rowH + 32; // title + header + rows + padding
+    // calcular ancho dinámico según personas
+    const nameColW = 180;
+    const priceColW = 90;
+    const personColW = 90;
+    const W = padX * 2 + nameColW + priceColW + people.length * personColW;
+
+    const extraRows = 1
+        + (d > 0 && discItems.length > 0 ? 1 : 0)
+        + (t > 0 && tipItems.length > 0  ? 1 : 0)
+        + 1;
+    const H = padY + 48 + headH + (items.length + extraRows) * rowH + padY;
 
     const canvas  = document.createElement('canvas');
     canvas.width  = W * scale;
     canvas.height = H * scale;
-    const ctx     = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     ctx.scale(scale, scale);
 
+    // fondo blanco
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
     // helpers
-    const hex = v => v;
-    function rect(x, y, w, h, fill, radius = 0) {
-        ctx.fillStyle = fill;
-        if (radius > 0) {
-            ctx.beginPath();
-            ctx.roundRect(x, y, w, h, radius);
-            ctx.fill();
-        } else {
-            ctx.fillRect(x, y, w, h);
-        }
-    }
-    function text(str, x, y, { size = fontSize, weight = '500', color = '#1a1a2e', align = 'left', maxW } = {}) {
+    function txt(str, x, y, { size=fontSize, weight='500', color='#111827', align='left', maxW=9999 } = {}) {
         ctx.font = `${weight} ${size}px Inter, system-ui, sans-serif`;
         ctx.fillStyle = color;
         ctx.textAlign = align;
         ctx.textBaseline = 'middle';
-        if (maxW) {
-            // truncate with ellipsis
-            let s = String(str);
-            while (ctx.measureText(s).width > maxW && s.length > 1) s = s.slice(0, -1);
-            if (s !== String(str)) s = s.slice(0, -1) + '…';
-            ctx.fillText(s, x, y);
+        let s = String(str ?? '');
+        while (s.length > 1 && ctx.measureText(s).width > maxW) s = s.slice(0, -1);
+        if (s !== String(str ?? '')) s = s.slice(0, -1) + '…';
+        ctx.fillText(s, x, y);
+    }
+
+    function hline(y, color='#E5E7EB') {
+        ctx.strokeStyle = color; ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(padX, y); ctx.lineTo(W - padX, y); ctx.stroke();
+    }
+
+    function fillRect(x, y, w, h, color, radius=0) {
+        ctx.fillStyle = color;
+        if (radius > 0) {
+            ctx.beginPath(); ctx.roundRect(x, y, w, h, radius); ctx.fill();
         } else {
-            ctx.fillText(String(str), x, y);
+            ctx.fillRect(x, y, w, h);
         }
     }
-    function line(x1, y1, x2, y2, color = '#E5E7EB') {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-    }
 
-    // ── fondo ──
-    rect(0, 0, W, H, '#ffffff');
+    // col X positions
+    const col = {
+        name:  padX,
+        price: padX + nameColW,
+        people: i => padX + nameColW + priceColW + i * personColW,
+    };
 
     // ── título ──
-    let y = 20;
-    text('Di', padX, y + 10, { size: 18, weight: '800', color: '#111' });
-    ctx.font = '800 18px Inter, system-ui, sans-serif';
+    let y = padY;
+    ctx.font = '800 20px Inter, system-ui, sans-serif';
+    ctx.fillStyle = '#111';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Di', col.name, y + 14);
     const diW = ctx.measureText('Di').width;
-    text('Bill', padX + diW, y + 10, { size: 18, weight: '800', color: '#4F46E5' });
-    text('Cuenta del restaurante', padX + diW + ctx.measureText('Bill').width + 12, y + 11, { size: 12, weight: '500', color: '#9CA3AF' });
-    y += 36;
+    ctx.fillStyle = '#4F46E5';
+    ctx.fillText('Bill', col.name + diW, y + 14);
+    y += 40;
 
-    // ── cabecera de tabla ──
-    rect(padX, y, W - padX * 2, headH, '#F4F4F8', 8);
-    const colMuted = '#6B7280';
-    const colDark  = '#1F2937';
-    text('ITEM',    padX + 10,                           y + headH / 2, { size: 10, weight: '700', color: colMuted });
-    text('PRECIO',  padX + 10 + nameColW + colW * 0.5,  y + headH / 2, { size: 10, weight: '700', color: colMuted, align: 'center' });
+    // ── header ──
+    fillRect(padX, y, W - padX * 2, headH, '#F4F4F8', 8);
+    const muted = '#6B7280', dark = '#1F2937';
+
+    txt('ITEM',   col.name  + 10,              y + headH/2, { size: headerFontSize, weight:'700', color: muted });
+    txt('PRECIO', col.price + priceColW/2,     y + headH/2, { size: headerFontSize, weight:'700', color: muted, align:'center' });
     people.forEach((p, i) => {
-        const cx = padX + 10 + nameColW + colW + colW * i + colW * 0.5;
-        text(p.toUpperCase(), cx, y + headH / 2, { size: 10, weight: '700', color: '#4F46E5', align: 'center', maxW: colW - 8 });
+        txt(p, col.people(i) + personColW/2, y + headH/2, {
+            size: headerFontSize, weight:'700', color:'#4F46E5',
+            align:'center', maxW: personColW - 8
+        });
     });
     y += headH;
 
-    // ── filas de items ──
+    // ── items ──
     items.forEach((item, idx) => {
-        const bg = idx % 2 === 0 ? '#ffffff' : '#F9FAFB';
-        rect(padX, y, W - padX * 2, rowH, bg);
-        line(padX, y + rowH, W - padX, y + rowH);
+        fillRect(padX, y, W - padX * 2, rowH, idx % 2 === 0 ? '#fff' : '#F9FAFB');
+        hline(y + rowH);
 
-        const tags = (item.applyDiscount ? ' · desc' : '') + (item.applyTip ? ' · prop' : '');
-        const label = item.name + tags + (item.units > 1 ? ` ×${item.units}` : '');
-        text(label, padX + 10, y + rowH / 2, { weight: '600', color: colDark, maxW: nameColW - 8 });
-        text('$' + fmt(item.price), padX + 10 + nameColW + colW * 0.5, y + rowH / 2, { weight: '700', color: '#4F46E5', align: 'center' });
+        const label = item.name + (item.units > 1 ? ` ×${item.units}` : '')
+            + (item.applyDiscount ? ' ·d' : '') + (item.applyTip ? ' ·p' : '');
+        txt(label,                    col.name  + 10,           y + rowH/2, { weight:'600', color: dark, maxW: nameColW - 16 });
+        txt('$'+fmt(item.price),      col.price + priceColW/2,  y + rowH/2, { weight:'700', color:'#4F46E5', align:'center', maxW: priceColW - 8 });
 
         people.forEach((p, i) => {
             const v = item.qty[p] || 0;
-            const cx = padX + 10 + nameColW + colW + colW * i + colW * 0.5;
-            if (v > 0) text(v, cx, y + rowH / 2, { weight: '700', color: colDark, align: 'center' });
+            if (v > 0) txt(v, col.people(i) + personColW/2, y + rowH/2, { weight:'700', color: dark, align:'center' });
         });
         y += rowH;
     });
 
-    // ── función para filas de totales ──
-    function totalRow(label, getVal, getPersonVal, bg, textColor, bold = false) {
-        rect(padX, y, W - padX * 2, rowH, bg);
-        line(padX, y + rowH, W - padX, y + rowH, '#E5E7EB');
+    // ── fila helper ──
+    function totalRow(label, grandVal, personFn, bg, color, bold=false) {
+        fillRect(padX, y, W - padX * 2, rowH, bg);
+        hline(y + rowH, '#E5E7EB');
         const w = bold ? '700' : '600';
-        text(label, padX + 10, y + rowH / 2, { weight: w, color: textColor, maxW: nameColW - 8 });
-        text(getVal(), padX + 10 + nameColW + colW * 0.5, y + rowH / 2, { weight: w, color: textColor, align: 'center' });
+        txt(label,     col.name  + 10,           y + rowH/2, { size: fontSize, weight: w, color, maxW: nameColW - 16 });
+        txt(grandVal,  col.price + priceColW/2,  y + rowH/2, { size: fontSize, weight: w, color, align:'center', maxW: priceColW - 8 });
         people.forEach((p, i) => {
-            const cx = padX + 10 + nameColW + colW + colW * i + colW * 0.5;
-            text(getPersonVal(p), cx, y + rowH / 2, { weight: w, color: textColor, align: 'center' });
+            const v = personFn(p);
+            if (v) txt(v, col.people(i) + personColW/2, y + rowH/2, { size: fontSize, weight: w, color, align:'center', maxW: personColW - 8 });
         });
         y += rowH;
     }
 
     const grandSub = items.reduce((s,i) => s + i.price, 0);
+    totalRow('Subtotal', '$'+fmt(grandSub), p => '$'+fmt(personSubtotal(p)), '#EEF2FF', '#1E1B4B', true);
 
-    // subtotal
-    totalRow('Subtotal',
-        () => '$' + fmt(grandSub),
-        p  => '$' + fmt(personSubtotal(p)),
-        '#EEF2FF', '#1E1B4B', true);
-
-    // descuento
     if (d > 0 && discItems.length > 0) {
-        const gd = discItems.reduce((s,i) => s + i.price * d / 100, 0);
-        totalRow(`Descuento ${d}%`,
-            () => '-$' + fmt(gd),
-            p  => { const pd = personDiscount(p); return pd > 0 ? '-$' + fmt(pd) : ''; },
-            '#FEF3C7', '#92400E', false);
+        const gd = discItems.reduce((s,i) => s + i.price*d/100, 0);
+        totalRow(`Descuento ${d}%`, '-$'+fmt(gd), p => { const v=personDiscount(p); return v>0?'-$'+fmt(v):''; }, '#FEF3C7', '#92400E');
     }
 
-    // propina
     if (t > 0 && tipItems.length > 0) {
-        const gt = tipItems.reduce((s,i) => { const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2); return s+tb*t/100; }, 0);
-        totalRow(`Propina ${t}%`,
-            () => '+$' + fmt(gt),
-            p  => { const pt = personTip(p); return pt > 0 ? '+$' + fmt(pt) : ''; },
-            '#DCFCE7', '#14532D', false);
+        const gt = tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0);
+        totalRow(`Propina ${t}%`, '+$'+fmt(gt), p => { const v=personTip(p); return v>0?'+$'+fmt(v):''; }, '#DCFCE7', '#14532D');
     }
 
-    // total — fila con fondo indigo
-    rect(padX, y, W - padX * 2, rowH + 4, '#4F46E5', 8);
-    text('TOTAL', padX + 10, y + (rowH + 4) / 2, { size: 14, weight: '800', color: '#fff' });
-    text('$' + fmt(grandTotal()), padX + 10 + nameColW + colW * 0.5, y + (rowH + 4) / 2, { size: 14, weight: '800', color: '#fff', align: 'center' });
+    // ── total final ──
+    fillRect(padX, y, W - padX * 2, rowH + 4, '#4F46E5', 8);
+    txt('TOTAL',           col.name  + 10,          y + (rowH+4)/2, { size:13, weight:'800', color:'#fff' });
+    txt('$'+fmt(grandTotal()), col.price + priceColW/2, y + (rowH+4)/2, { size:13, weight:'800', color:'#fff', align:'center', maxW: priceColW - 8 });
     people.forEach((p, i) => {
-        const cx = padX + 10 + nameColW + colW + colW * i + colW * 0.5;
-        text('$' + fmt(personTotal(p)), cx, y + (rowH + 4) / 2, { size: 14, weight: '800', color: '#fff', align: 'center' });
+        txt('$'+fmt(personTotal(p)), col.people(i) + personColW/2, y + (rowH+4)/2, { size:13, weight:'800', color:'#fff', align:'center', maxW: personColW - 8 });
     });
 
-    // ── exportar ──
-    const dataURL = canvas.toDataURL('image/png');
+    // ── copiar al portapapeles ──
+    canvas.toBlob(blob => {
+        try {
+            const item = new ClipboardItem({ 'image/png': blob });
+            navigator.clipboard.write([item]).then(() => {
+                const btn = document.querySelector('[onclick="downloadImage()"]');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<svg><use href="#i-check"/></svg> ¡Copiada!';
+                setTimeout(() => btn.innerHTML = orig, 2000);
+            }).catch(() => fallbackDownload(canvas));
+        } catch(e) {
+            fallbackDownload(canvas);
+        }
+    }, 'image/png');
+}
+
+function fallbackDownload(canvas) {
     const a = document.createElement('a');
-    a.href     = dataURL;
+    a.href = canvas.toDataURL('image/png');
     a.download = 'dibill-cuenta.png';
     a.click();
 }
