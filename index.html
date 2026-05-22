@@ -620,6 +620,71 @@
         #previewWrap tr.p-tip  td { background: #DCFCE7; color: #14532D; font-weight: 600; }
         #previewWrap tr.p-tot  td { background: #4F46E5; color: #fff; font-weight: 800; font-size: 0.95rem; }
 
+        /* ─────────────── IMPORT MODAL ─────────────── */
+        .prompt-box {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 0.82rem;
+            color: var(--text-2);
+            line-height: 1.7;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .import-textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 12px;
+            background: var(--bg-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-family: 'JetBrains Mono', monospace;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        .import-textarea:focus { outline: none; border-color: var(--primary); }
+        .import-textarea::placeholder { color: var(--text-dim); }
+
+        .import-step {
+            display: flex; gap: 12px; align-items: flex-start;
+            margin-bottom: 14px;
+        }
+        .step-num {
+            width: 24px; height: 24px; border-radius: 999px;
+            background: var(--primary-bg); color: var(--primary-2);
+            border: 1px solid rgba(99,102,241,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.72rem; font-weight: 800; flex-shrink: 0;
+        }
+        .step-text { font-size: 0.85rem; color: var(--text-2); line-height: 1.5; padding-top: 3px; }
+        .step-text b { color: var(--text); }
+
+        .import-result {
+            background: var(--green-bg);
+            border: 1px solid rgba(74,222,128,0.25);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.83rem;
+            color: var(--green);
+            margin-top: 10px;
+            display: none;
+        }
+        .import-error {
+            background: var(--red-bg);
+            border: 1px solid rgba(248,113,113,0.25);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.83rem;
+            color: var(--red);
+            margin-top: 10px;
+            display: none;
+        }
+
         /* ─────────────── ASSIGN BADGE ─────────────── */
         .assign-badge {
             display: inline-flex; align-items: center; gap: 5px;
@@ -715,6 +780,12 @@
         <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
         </symbol>
+        <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+        </symbol>
+        <symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"/>
+        </symbol>
         <symbol id="i-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/>
         </symbol>
@@ -804,6 +875,9 @@
         <button class="btn btn-primary btn-full" onclick="addItem()">
             <svg><use href="#i-plus"/></svg> Agregar ítem
         </button>
+        <button class="btn btn-ghost btn-full" onclick="openImportModal()" style="margin-top:8px">
+            <svg><use href="#i-import"/></svg> Importar desde Claude / ChatGPT
+        </button>
     </div>
 
     <!-- Lista de items -->
@@ -862,6 +936,60 @@
         </div>
     </div>
 
+</div>
+
+<!-- Modal importar desde IA -->
+<div id="importModal" class="modal" onclick="closeImportModalOutside(event)">
+    <div class="modal-box">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-title">
+                <svg><use href="#i-import"/></svg>
+                Importar desde Claude / ChatGPT
+            </div>
+            <button class="icon-btn" onclick="closeImportModal()" aria-label="Cerrar">
+                <svg><use href="#i-x"/></svg>
+            </button>
+        </div>
+
+        <!-- Paso 1: copiar prompt -->
+        <div class="import-step">
+            <div class="step-num">1</div>
+            <div class="step-text"><b>Copia este prompt</b> y mándaselo a Claude o ChatGPT junto con la foto de tu boleta</div>
+        </div>
+        <div class="prompt-box" id="thePrompt">Analiza la boleta en la imagen. Devuélveme SOLO un array JSON sin texto adicional, sin explicaciones, sin markdown.
+
+Reglas estrictas:
+- Usa el precio UNITARIO original de cada producto (sin descuentos aplicados)
+- Ignora completamente las líneas de: descuento, propina, subtotal, total, servicio
+- Si un producto aparece varias veces, agrúpalo sumando las cantidades
+- Los precios deben ser números enteros sin puntos, comas ni símbolos
+- Si no puedes leer un precio con certeza, omite ese item
+
+Formato exacto:
+[{"nombre":"Nombre del producto","precio":9990,"cantidad":1}]</div>
+        <button class="btn btn-ghost btn-full" onclick="copyPrompt()" style="margin-bottom:16px">
+            <svg><use href="#i-clipboard"/></svg> <span id="copyPromptLabel">Copiar prompt</span>
+        </button>
+
+        <!-- Paso 2: pegar respuesta -->
+        <div class="import-step">
+            <div class="step-num">2</div>
+            <div class="step-text"><b>Pega la respuesta</b> del chat aquí abajo</div>
+        </div>
+        <textarea class="import-textarea" id="importTextarea"
+            placeholder='Pega aquí la respuesta, por ejemplo:&#10;[{"nombre":"Pizza","precio":9990,"cantidad":2}]'></textarea>
+
+        <div class="import-result" id="importResult"></div>
+        <div class="import-error"  id="importError"></div>
+
+        <div class="modal-footer" style="margin-top:14px">
+            <button class="btn btn-primary" onclick="doImport()">
+                <svg><use href="#i-import"/></svg> Importar items
+            </button>
+            <button class="btn btn-ghost" onclick="closeImportModal()">Cancelar</button>
+        </div>
+    </div>
 </div>
 
 <!-- Modal bottom sheet -->
@@ -1492,6 +1620,102 @@ document.getElementById('inPrice').addEventListener('keydown',  e => { if(e.key=
 document.getElementById('inQty').addEventListener('keydown',   e => { if(e.key==='Enter') addItem(); });
 
 renderAll();
+
+/* ── Importar desde IA ── */
+function openImportModal() {
+    document.getElementById('importTextarea').value = '';
+    document.getElementById('importResult').style.display = 'none';
+    document.getElementById('importError').style.display  = 'none';
+    document.getElementById('importModal').classList.add('open');
+}
+function closeImportModal() { document.getElementById('importModal').classList.remove('open'); }
+function closeImportModalOutside(e) { if (e.target === document.getElementById('importModal')) closeImportModal(); }
+
+function copyPrompt() {
+    const prompt = document.getElementById('thePrompt').textContent;
+    navigator.clipboard.writeText(prompt).then(() => {
+        const lbl = document.getElementById('copyPromptLabel');
+        lbl.textContent = '¡Copiado!';
+        setTimeout(() => lbl.textContent = 'Copiar prompt', 2000);
+    }).catch(() => {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = prompt;
+        document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta);
+        const lbl = document.getElementById('copyPromptLabel');
+        lbl.textContent = '¡Copiado!';
+        setTimeout(() => lbl.textContent = 'Copiar prompt', 2000);
+    });
+}
+
+function doImport() {
+    const raw = document.getElementById('importTextarea').value.trim();
+    const resultEl = document.getElementById('importResult');
+    const errorEl  = document.getElementById('importError');
+    resultEl.style.display = 'none';
+    errorEl.style.display  = 'none';
+
+    if (!raw) { errorEl.textContent = 'Pega la respuesta del chat primero.'; errorEl.style.display = 'block'; return; }
+
+    // extraer JSON aunque venga con texto alrededor
+    const match = raw.match(/\[[\s\S]*\]/);
+    if (!match) { errorEl.textContent = 'No encontré un JSON válido. Asegúrate de copiar la respuesta completa del chat.'; errorEl.style.display = 'block'; return; }
+
+    let parsed;
+    try { parsed = JSON.parse(match[0]); }
+    catch(e) { errorEl.textContent = 'El JSON tiene errores de formato. Intenta pedirle de nuevo al chat.'; errorEl.style.display = 'block'; return; }
+
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+        errorEl.textContent = 'La respuesta no contiene items válidos.';
+        errorEl.style.display = 'block'; return;
+    }
+
+    let imported = 0;
+    let skipped  = 0;
+
+    parsed.forEach(item => {
+        // normalizar campos (acepta variantes en español e inglés)
+        const nombre   = item.nombre || item.name || item.producto || item.item || '';
+        const precioRaw = item.precio || item.price || item.precio_unitario || 0;
+        const cantRaw   = item.cantidad || item.quantity || item.qty || 1;
+
+        // limpiar precio: sacar puntos, comas, símbolos
+        const precio = parseInt(String(precioRaw).replace(/[^0-9]/g, '')) || 0;
+        const cant   = parseInt(cantRaw) || 1;
+
+        if (!nombre || precio <= 0) { skipped++; return; }
+
+        // buscar si ya existe
+        const existing = items.find(i => i.name.toLowerCase() === nombre.toLowerCase());
+        if (existing) {
+            existing.units    += cant;
+            existing.unitPrice = precio;
+            existing.price     = existing.unitPrice * existing.units;
+        } else {
+            const qty = {};
+            people.forEach(p => qty[p] = 0);
+            items.push({ id: Date.now() + Math.random(), name: nombre, price: precio * cant, unitPrice: precio, units: cant, qty, applyDiscount: false, applyTip: false });
+        }
+        imported++;
+    });
+
+    if (imported === 0) {
+        errorEl.textContent = 'No se pudo importar ningún item. Revisa el formato.';
+        errorEl.style.display = 'block'; return;
+    }
+
+    const msg = skipped > 0
+        ? `✓ ${imported} items importados. ${skipped} omitidos por datos incompletos.`
+        : `✓ ${imported} items importados correctamente.`;
+
+    resultEl.textContent   = msg;
+    resultEl.style.display = 'block';
+
+    renderAll();
+    setTimeout(closeImportModal, 1200);
+}
 
 /* ── PWA Install ── */
 let deferredPrompt = null;
