@@ -1659,13 +1659,22 @@ function doImport() {
 
     if (!raw) { errorEl.textContent = 'Pega la respuesta del chat primero.'; errorEl.style.display = 'block'; return; }
 
-    // extraer JSON aunque venga con texto alrededor
-    const match = raw.match(/\[[\s\S]*\]/);
-    if (!match) { errorEl.textContent = 'No encontré un JSON válido. Asegúrate de copiar la respuesta completa del chat.'; errorEl.style.display = 'block'; return; }
-
+    // intentar parsear directo, o extraer JSON si viene con texto alrededor
     let parsed;
-    try { parsed = JSON.parse(match[0]); }
-    catch(e) { errorEl.textContent = 'El JSON tiene errores de formato. Intenta pedirle de nuevo al chat.'; errorEl.style.display = 'block'; return; }
+    try {
+        // primero intentar el texto completo
+        parsed = JSON.parse(raw);
+    } catch(e) {
+        // buscar un array JSON dentro del texto
+        const start = raw.indexOf('[');
+        const end   = raw.lastIndexOf(']');
+        if (start === -1 || end === -1 || end <= start) {
+            errorEl.textContent = 'No encontré un JSON válido. Asegúrate de copiar la respuesta completa del chat.';
+            errorEl.style.display = 'block'; return;
+        }
+        try { parsed = JSON.parse(raw.slice(start, end + 1)); }
+        catch(e2) { errorEl.textContent = 'El JSON tiene errores de formato. Intenta pedirle de nuevo al chat.'; errorEl.style.display = 'block'; return; }
+    }
 
     if (!Array.isArray(parsed) || parsed.length === 0) {
         errorEl.textContent = 'La respuesta no contiene items válidos.';
