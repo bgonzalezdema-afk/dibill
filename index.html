@@ -974,28 +974,13 @@
         </div>
 
         <!-- Paso 1: copiar prompt -->
-        <div class="import-step">
-            <div class="step-num">1</div>
-            <div class="step-text"><b>Copia este prompt</b> y mándaselo a Claude o ChatGPT junto con la foto de tu boleta</div>
-        </div>
-        <div class="prompt-box" id="thePrompt">Analiza la boleta en la imagen. Devuélveme SOLO un array JSON sin texto adicional, sin explicaciones, sin markdown.
-
-Reglas estrictas:
-- Usa el precio UNITARIO original de cada producto (sin descuentos aplicados)
-- Ignora completamente las líneas de: descuento, propina, subtotal, total, servicio
-- Si un producto aparece varias veces, agrúpalo sumando las cantidades
-- Los precios deben ser números enteros sin puntos, comas ni símbolos
-- Si no puedes leer un precio con certeza, omite ese item
-
-Formato exacto:
-[{"nombre":"Nombre del producto","precio":9990,"cantidad":1}]</div>
         <button class="btn btn-ghost btn-full" onclick="copyPrompt()" style="margin-bottom:16px">
-            <svg><use href="#i-clipboard"/></svg> <span id="copyPromptLabel">Copiar prompt</span>
+            <svg><use href="#i-clipboard"/></svg> <span id="copyPromptLabel">Copiar prompt para Claude / ChatGPT</span>
         </button>
 
         <!-- Paso 2: pegar respuesta -->
         <div class="import-step">
-            <div class="step-num">2</div>
+            <div class="step-num">1</div>
             <div class="step-text"><b>Pega la respuesta</b> del chat aquí abajo</div>
         </div>
         <textarea class="import-textarea" id="importTextarea"
@@ -1696,8 +1681,20 @@ function openImportModal() {
 function closeImportModal() { document.getElementById('importModal').classList.remove('open'); }
 function closeImportModalOutside(e) { if (e.target === document.getElementById('importModal')) closeImportModal(); }
 
+const IMPORT_PROMPT = `Analiza la boleta en la imagen. Devuélveme SOLO un array JSON sin texto adicional, sin explicaciones, sin markdown.
+
+Reglas estrictas:
+- Usa el precio UNITARIO original de cada producto (sin descuentos aplicados)
+- Ignora completamente las líneas de: descuento, propina, subtotal, total, servicio
+- Si un producto aparece varias veces, agrúpalo sumando las cantidades
+- Los precios deben ser números enteros sin puntos, comas ni símbolos
+- Si no puedes leer un precio con certeza, omite ese item
+
+Formato exacto:
+[{"nombre":"Nombre del producto","precio":9990,"cantidad":1}]`;
+
 function copyPrompt() {
-    const prompt = document.getElementById('thePrompt').textContent;
+    const prompt = IMPORT_PROMPT;
     navigator.clipboard.writeText(prompt).then(() => {
         const lbl = document.getElementById('copyPromptLabel');
         lbl.textContent = '¡Copiado!';
