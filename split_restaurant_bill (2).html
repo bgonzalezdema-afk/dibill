@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>DiBill — divide la cuenta</title>
+
+    <!-- PWA -->
+    <meta name="application-name" content="DiBill">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DiBill">
+    <meta name="theme-color" content="#0A0B10">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Manifest inline via blob -->
+    <script>
+    (function() {
+        const manifest = {
+            name: "DiBill — divide la cuenta",
+            short_name: "DiBill",
+            description: "Divide la cuenta del restaurante fácilmente",
+            start_url: ".",
+            display: "standalone",
+            background_color: "#0A0B10",
+            theme_color: "#0A0B10",
+            orientation: "portrait",
+            icons: [
+                {
+                    src: "data:image/png;base64,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",
+                    sizes: "256x256",
+                    type: "image/png",
+                    purpose: "any maskable"
+                }
+            ]
+        };
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+        const url  = URL.createObjectURL(blob);
+        const link = document.createElement('link');
+        link.rel  = 'manifest';
+        link.href = url;
+        document.currentScript.parentNode.appendChild(link);
+    })();
+    </script>
+
+    <!-- Apple touch icon inline SVG -->
+    <link rel="apple-touch-icon" href="data:image/png;base64,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">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <link rel="icon" type="image/png" href="data:image/png;base64,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">
+
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+        :root {
+            /* surfaces */
+            --bg:           #0A0B10;
+            --bg-2:         #0E0F15;
+            --surface:      #14151E;
+            --surface-2:    #1A1C27;
+            --surface-3:    #20222F;
+            --border:       #262833;
+            --border-2:     #2F313F;
+            --border-focus: #3D4055;
+
+            /* text */
+            --text:         #E8E9F0;
+            --text-2:       #B4B6C4;
+            --text-muted:   #6B6E80;
+            --text-dim:     #44475A;
+
+            /* brand */
+            --primary:      #6366F1;
+            --primary-2:    #818CF8;
+            --primary-3:    #4F46E5;
+            --primary-bg:   rgba(99, 102, 241, 0.10);
+            --primary-bg-2: rgba(99, 102, 241, 0.18);
+
+            /* semantic */
+            --amber:        #E9B872;
+            --amber-bg:     rgba(233, 184, 114, 0.10);
+            --green:        #4ADE80;
+            --green-2:      #22c55e;
+            --green-bg:     rgba(74, 222, 128, 0.10);
+            --red:          #F87171;
+            --red-bg:       rgba(248, 113, 113, 0.10);
+
+            --radius-sm: 8px;
+            --radius:    12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow:    0 4px 16px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.4);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.5), 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        html, body { background: var(--bg); }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px 16px 80px;
+            font-feature-settings: "cv11", "ss01", "ss03";
+            -webkit-font-smoothing: antialiased;
+            background:
+              radial-gradient(1200px 600px at 50% -200px, rgba(99,102,241,0.10), transparent 60%),
+              var(--bg);
+        }
+
+        .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-feature-settings: "ss01", "ss02"; }
+
+        .shell { max-width: 620px; margin: 0 auto; }
+
+        /* ─────────────── HEADER ─────────────── */
+        .top-bar {
+            display:flex; align-items:center; justify-content:space-between;
+            margin-bottom: 24px;
+        }
+        .brand { display:flex; align-items:center; gap:12px; }
+        .brand-mark {
+            width:40px; height:40px; border-radius:11px;
+            background: linear-gradient(135deg, var(--primary-2) 0%, var(--primary-3) 100%);
+            display:flex; align-items:center; justify-content:center;
+            box-shadow: 0 6px 20px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+            flex-shrink:0;
+        }
+        .brand-mark svg { width:24px; height:24px; }
+        .brand-text { display:flex; flex-direction:column; gap:1px; }
+        .brand-name {
+            font-size: 1.25rem; font-weight: 800; color:#fff;
+            letter-spacing: -0.03em; line-height: 1;
+        }
+        .brand-name .accent { color: var(--primary-2); }
+        .brand-tag {
+            font-size: 0.72rem; color: var(--text-muted); font-weight: 500;
+            letter-spacing: 0.01em;
+        }
+
+        .header-actions { display:flex; gap:8px; }
+        .icon-btn {
+            width:38px; height:38px; border-radius:10px;
+            background: var(--surface); border:1px solid var(--border);
+            display:flex; align-items:center; justify-content:center;
+            color: var(--text-2); cursor:pointer; transition: all .15s;
+        }
+        .icon-btn:hover { background: var(--surface-2); border-color: var(--border-2); color: var(--text); }
+        .icon-btn svg { width:16px; height:16px; }
+
+        /* ─────────────── HERO TOTAL ─────────────── */
+        .hero {
+            background: linear-gradient(160deg, rgba(99,102,241,0.18) 0%, rgba(99,102,241,0.04) 60%, transparent 100%), var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 22px 22px 18px;
+            margin-bottom: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content:''; position:absolute; inset:0;
+            background: radial-gradient(400px 200px at 90% -50px, rgba(129,140,248,0.25), transparent 70%);
+            pointer-events: none;
+        }
+        .hero-content { position:relative; }
+        .hero-lbl {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.10em;
+            font-weight: 700; color: var(--primary-2);
+            display:flex; align-items:center; gap:8px;
+            margin-bottom: 10px;
+        }
+        .hero-lbl::before {
+            content:''; width:6px; height:6px; border-radius:2px;
+            background: var(--primary-2);
+            box-shadow: 0 0 8px var(--primary-2);
+        }
+        .hero-amount {
+            font-size: 2.6rem; font-weight: 800; color:#fff;
+            letter-spacing: -0.04em; line-height: 1;
+            display:flex; align-items:baseline; gap:4px;
+        }
+        .hero-amount .currency { font-size: 1.2rem; color: var(--text-muted); font-weight: 600; align-self: flex-start; margin-top: 6px; }
+
+        .hero-meta {
+            display:flex; gap: 24px; margin-top: 18px;
+            padding-top: 14px; border-top: 1px solid var(--border);
+        }
+        .hero-stat { display:flex; flex-direction:column; gap:3px; }
+        .hero-stat-val { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+        .hero-stat-lbl { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.02em; }
+
+        /* ─────────────── CARDS ─────────────── */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 18px;
+            margin-bottom: 12px;
+        }
+        .card-head {
+            display:flex; align-items:center; justify-content:space-between;
+            margin-bottom: 14px;
+        }
+        .card-title {
+            font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--text-2);
+            display:flex; align-items:center; gap: 8px;
+        }
+        .card-title svg { width:14px; height:14px; color: var(--primary-2); }
+        .card-count {
+            font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+            background: var(--surface-2); border:1px solid var(--border);
+            padding: 2px 8px; border-radius: 999px; min-width: 22px; text-align:center;
+        }
+
+        /* ─────────────── INPUTS ─────────────── */
+        .input-row { display:flex; gap:8px; }
+
+        input[type="text"], input[type="number"] {
+            padding: 12px 14px;
+            background: var(--bg-2); color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            width: 100%;
+            transition: border-color .15s, background .15s;
+        }
+        input::placeholder { color: var(--text-dim); }
+        input:focus {
+            outline:none; border-color: var(--primary); background: var(--surface-2);
+            box-shadow: 0 0 0 3px var(--primary-bg);
+        }
+
+        /* ─────────────── BUTTONS ─────────────── */
+        .btn {
+            padding: 12px 16px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            font-family: 'Inter', sans-serif;
+            transition: all .15s;
+            white-space: nowrap;
+            min-height: 44px;
+            display:inline-flex; align-items:center; justify-content:center; gap:8px;
+            letter-spacing: -0.01em;
+        }
+        .btn svg { width:15px; height:15px; flex-shrink:0; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary {
+            background: var(--primary); color:#fff;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.30), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+        .btn-primary:hover { background: var(--primary-3); }
+        .btn-green { background: var(--green-2); color:#fff; box-shadow: 0 4px 12px rgba(34,197,94,0.25), inset 0 1px 0 rgba(255,255,255,0.15); }
+        .btn-green:hover { background: #16a34a; }
+        .btn-ghost {
+            background: var(--surface-2); color: var(--text-2);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--surface-3); color: var(--text); border-color: var(--border-2); }
+        .btn-full { width:100%; }
+
+        /* ─────────────── PEOPLE TAGS ─────────────── */
+        .people-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom: 12px; min-height: 0; }
+        .people-tags:empty { display:none; }
+        .p-tag {
+            display:inline-flex; align-items:center; gap:8px;
+            background: var(--primary-bg); color: var(--primary-2);
+            border: 1px solid rgba(99,102,241,0.25);
+            padding: 6px 6px 6px 12px;
+            border-radius: 999px;
+            font-size: 0.82rem; font-weight: 600;
+        }
+        .p-tag-x {
+            width:18px; height:18px; border-radius: 999px;
+            display:inline-flex; align-items:center; justify-content:center;
+            background: rgba(99,102,241,0.18); border:none; cursor:pointer;
+            color: var(--primary-2);
+            transition: background .15s;
+        }
+        .p-tag-x:hover { background: var(--red-bg); color: var(--red); }
+        .p-tag-x svg { width:10px; height:10px; }
+
+        /* ─────────────── ITEMS ─────────────── */
+        .items-list { display:flex; flex-direction:column; gap: 10px; }
+
+        .item-row {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            transition: border-color .15s;
+        }
+        .item-row:hover { border-color: var(--border-2); }
+
+        .item-row-top {
+            display:flex; align-items:center; gap: 12px;
+            margin-bottom: 12px;
+        }
+        .item-name {
+            font-weight: 600; color: var(--text);
+            font-size: 0.95rem;
+            flex: 1; letter-spacing: -0.01em;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .item-price {
+            color: var(--text); font-weight: 700;
+            font-size: 1rem; letter-spacing: -0.02em;
+        }
+        .btn-del {
+            width: 28px; height: 28px;
+            display:inline-flex; align-items:center; justify-content:center;
+            background: transparent; color: var(--text-muted);
+            border: 1px solid var(--border); border-radius: 8px;
+            cursor:pointer; transition: all .15s;
+            flex-shrink: 0;
+        }
+        .btn-del:hover { background: var(--red-bg); border-color: rgba(248,113,113,0.35); color: var(--red); }
+        .btn-del svg { width: 11px; height: 11px; }
+
+        .item-flags { display:flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+        .item-flags:empty { display:none; }
+
+        .flag-chip {
+            display:inline-flex; align-items:center; gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.74rem; font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-muted);
+            transition: all .15s;
+            user-select: none;
+        }
+        .flag-chip svg { width: 11px; height: 11px; }
+        .flag-chip input { display: none; }
+        .flag-chip:hover { border-color: var(--border-2); color: var(--text-2); }
+        .flag-chip.disc.active {
+            background: var(--amber-bg);
+            border-color: rgba(233,184,114,0.35);
+            color: var(--amber);
+        }
+        .flag-chip.tip.active {
+            background: var(--green-bg);
+            border-color: rgba(74,222,128,0.35);
+            color: var(--green);
+        }
+
+        .item-people { display:flex; flex-wrap:wrap; gap:6px; }
+        .person-qty {
+            display:flex; flex-direction:column; align-items:center; gap:5px;
+            background: var(--surface);
+            border:1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            min-width: 68px;
+            transition: border-color .15s;
+        }
+        .person-qty:focus-within { border-color: var(--primary); background: var(--surface-2); }
+        .person-qty label {
+            font-size: 0.68rem; font-weight: 600;
+            color: var(--text-muted);
+            text-align: center;
+            letter-spacing: 0.01em;
+            max-width: 80px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .person-qty input {
+            width: 48px; padding: 4px 0;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+            background: var(--bg-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+        .person-qty input:focus { box-shadow: none; }
+
+        .item-empty {
+            font-size: 0.8rem; color: var(--text-muted);
+            text-align: center; padding: 8px;
+            background: var(--surface); border: 1px dashed var(--border);
+            border-radius: 8px;
+        }
+
+        /* ─────────────── TOTALS BLOCK ─────────────── */
+        .totals-block {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-top: 14px;
+        }
+        .total-line {
+            display:flex; justify-content:space-between; align-items:flex-start;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+            gap: 12px;
+        }
+        .total-line:last-child { border-bottom: none; }
+        .total-line .tl-label { flex: 1; }
+        .total-line .tl-head { font-weight: 600; color: var(--text-2); display:flex; align-items:center; gap:6px; }
+        .total-line .tl-val { font-weight: 700; letter-spacing: -0.01em; flex-shrink: 0; }
+
+        .total-line.subtotal { background: var(--surface); }
+        .total-line.subtotal .tl-head { color: var(--text); }
+
+        .total-line.disc-line { background: rgba(233,184,114,0.04); }
+        .total-line.disc-line .tl-head { color: var(--amber); }
+        .total-line.disc-line .tl-val  { color: var(--amber); }
+
+        .total-line.tip-line { background: rgba(74,222,128,0.04); }
+        .total-line.tip-line .tl-head { color: var(--green); }
+        .total-line.tip-line .tl-val  { color: var(--green); }
+
+        .total-line.grand { background: var(--primary-bg-2); padding: 14px; }
+        .total-line.grand .tl-head { color:#fff; font-size: 0.95rem; font-weight: 700; }
+        .total-line.grand .tl-val  { color:#fff; font-size: 1.05rem; font-weight: 800; }
+
+        .tl-people {
+            display:flex; gap: 4px 12px; flex-wrap:wrap;
+            margin-top: 6px;
+        }
+        .tl-person {
+            font-size: 0.74rem; color: var(--text-muted);
+            font-weight: 500;
+        }
+        .tl-person b { color: var(--text-2); font-weight: 600; }
+        .disc-line .tl-person b { color: var(--amber); }
+        .tip-line .tl-person b { color: var(--green); }
+        .grand .tl-person { color: rgba(255,255,255,0.65); }
+        .grand .tl-person b { color: #fff; }
+
+        /* ─────────────── CFG (discount / tip) ─────────────── */
+        .cfg-block {
+            margin-top: 16px; padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display:flex; flex-direction:column; gap: 12px;
+        }
+        .cfg-group {
+            display:flex; align-items:center; gap: 10px; flex-wrap: wrap;
+            padding: 10px 12px;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        .cfg-label {
+            font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.04em;
+            display:flex; align-items:center; gap: 6px;
+            min-width: 110px;
+        }
+        .cfg-label svg { width: 13px; height: 13px; }
+        .cfg-group.disc .cfg-label { color: var(--amber); }
+        .cfg-group.tip  .cfg-label { color: var(--green); }
+        .cfg-input-wrap {
+            position: relative; display: inline-flex; align-items: center;
+        }
+        .cfg-input-wrap input { width: 90px; padding-right: 28px; }
+        .cfg-input-wrap::after {
+            content: '%'; position:absolute; right: 12px;
+            color: var(--text-muted); font-weight: 600; font-size: 0.9rem;
+            pointer-events: none;
+        }
+        .cfg-hint { font-size: 0.72rem; color: var(--text-muted); }
+
+        .toggle-pill {
+            padding: 5px 10px; border-radius: 999px;
+            border: 1px solid var(--green);
+            background: var(--green-bg);
+            color: var(--green);
+            font-size: 0.7rem; font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor:pointer; transition: all .15s;
+            min-height: 28px;
+        }
+        .toggle-pill.pre {
+            background: var(--amber-bg);
+            color: var(--amber); border-color: var(--amber);
+        }
+
+        /* ─────────────── PERSON CHIPS ─────────────── */
+        .person-chips {
+            display:grid;
+            grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+            gap: 8px;
+        }
+        .p-chip {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .p-chip::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:2px;
+            background: linear-gradient(90deg, var(--primary-2), var(--primary-3));
+        }
+        .p-chip .pn {
+            font-size: 0.78rem; font-weight: 600;
+            color: var(--text-2);
+            margin-bottom: 6px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .p-chip .pa {
+            font-size: 1.3rem; font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        .p-chip .pl {
+            font-size: 0.65rem; color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+        }
+
+        /* ─────────────── SHARE BUTTONS GRID ─────────────── */
+        .share-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .share-grid .btn-full { grid-column: span 2; }
+
+        /* ─────────────── EMPTY STATES ─────────────── */
+        .empty {
+            text-align: center; padding: 32px 16px;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            background: var(--bg-2);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+        .empty svg { width: 32px; height: 32px; color: var(--text-dim); margin-bottom: 8px; }
+
+        /* ─────────────── MODAL ─────────────── */
+        .modal {
+            display:none; position:fixed; inset:0;
+            background: rgba(5,6,10,0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 999;
+            justify-content: center; align-items: flex-end;
+        }
+        .modal.open { display:flex; animation: fadeIn .2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 24px 24px 0 0;
+            padding: 20px;
+            width: 100%; max-width: 620px;
+            max-height: 88vh; overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp .25s ease-out;
+        }
+        .modal-handle {
+            width: 40px; height: 4px;
+            background: var(--border-2); border-radius: 999px;
+            margin: 0 auto 18px;
+        }
+        .modal-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom: 18px;
+        }
+        .modal-title {
+            display:flex; align-items:center; gap: 10px;
+            font-size: 1rem; color: var(--text); font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .modal-title svg { width: 18px; height: 18px; color: var(--primary-2); }
+
+        .modal-footer {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 8px; margin-top: 18px;
+        }
+        .modal-footer .btn-ghost { grid-column: span 2; }
+
+        /* preview boleta */
+        #previewWrap { background: #fff; border-radius: 12px; padding: 18px; overflow-x: auto; }
+        #previewWrap table {
+            width: 100%; border-collapse: collapse;
+            font-size: 0.82rem; color: #111;
+            min-width: 320px;
+            font-family: 'Inter', sans-serif;
+        }
+        #previewWrap th {
+            background: #F4F4F8;
+            padding: 10px 12px;
+            border: 1px solid #E5E7EB;
+            font-weight: 700;
+            text-align: right;
+            color: #1F2937;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        #previewWrap th:first-child { text-align: left; }
+        #previewWrap td {
+            padding: 9px 12px;
+            border: 1px solid #E5E7EB;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        #previewWrap td:first-child { text-align: left; font-weight: 500; }
+        #previewWrap tr.p-sub  td { background: #EEF2FF; font-weight: 700; color: #1E1B4B; }
+        #previewWrap tr.p-disc td { background: #FEF3C7; color: #78350F; font-weight: 600; }
+        #previewWrap tr.p-tip  td { background: #DCFCE7; color: #14532D; font-weight: 600; }
+        #previewWrap tr.p-tot  td { background: #4F46E5; color: #fff; font-weight: 800; font-size: 0.95rem; }
+
+        /* ─────────────── ASSIGN BADGE ─────────────── */
+        .assign-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 9px; border-radius: 999px;
+            font-size: 0.72rem; font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+        .assign-badge.ok {
+            background: var(--green-bg);
+            color: var(--green);
+            border: 1px solid rgba(74,222,128,0.25);
+        }
+        .assign-badge.warn {
+            background: var(--amber-bg);
+            color: var(--amber);
+            border: 1px solid rgba(233,184,114,0.25);
+        }
+        .assign-badge.over {
+            background: var(--red-bg);
+            color: var(--red);
+            border: 1px solid rgba(248,113,113,0.25);
+        }
+        .assign-badge svg { width: 10px; height: 10px; }
+
+        #items-status {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 999px;
+            font-size: 0.72rem; font-weight: 700;
+            transition: all .2s;
+        }
+        #items-status.neutral { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+        #items-status.all-ok  { background: var(--green-bg);  color: var(--green);      border: 1px solid rgba(74,222,128,0.25); }
+        #items-status.has-warn{ background: var(--amber-bg);  color: var(--amber);      border: 1px solid rgba(233,184,114,0.25); }
+        #items-status svg { width: 11px; height: 11px; }
+
+        /* ─────────────── RESPONSIVE ─────────────── */
+        @media (max-width: 380px) {
+            body { padding: 16px 12px 60px; }
+            .hero-amount { font-size: 2.2rem; }
+            .hero-meta { gap: 16px; }
+            .card { padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ─────────────── SVG ICON SPRITE ─────────────── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+        <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </symbol>
+        <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 2v20l2-2 2 2 2-2 2 2 2-2 2 2 2-2 2 2V2l-2 2-2-2-2 2-2-2-2 2-2-2-2 2-2-2Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/>
+        </symbol>
+        <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </symbol>
+        <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+        </symbol>
+        <symbol id="i-coins" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/>
+        </symbol>
+        <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+        </symbol>
+        <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/>
+        </symbol>
+        <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </symbol>
+        <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+        </symbol>
+        <symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        </symbol>
+        <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+        </symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </symbol>
+        <symbol id="i-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/>
+        </symbol>
+    </defs>
+</svg>
+
+<div class="shell">
+
+    <!-- Header -->
+    <div class="top-bar">
+        <div class="brand">
+            <!-- LOGO MARK: ÷ reinterpreted as split receipt -->
+            <div class="brand-mark" aria-label="DiBill logo">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="9" y="6" width="5" height="5" rx="1.2" fill="white" opacity="0.95"/>
+                    <rect x="5" y="14" width="22" height="4" rx="1.5" fill="white"/>
+                    <rect x="18" y="21" width="5" height="5" rx="1.2" fill="white" opacity="0.95"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <div class="brand-name">Di<span class="accent">Bill</span></div>
+                <div class="brand-tag">Divide la cuenta sin pelear</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" id="installBtn" title="Instalar app" style="display:none" aria-label="Instalar en pantalla de inicio">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                    <path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/><path d="M20 18H4v2h16v-2z"/>
+                </svg>
+            </button>
+            <button class="icon-btn" title="Información" onclick="alert('DiBill — divide la cuenta del restaurante de forma justa, ítem por ítem.')" aria-label="Información">
+                <svg><use href="#i-info"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- HERO TOTAL -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-lbl">Total general</div>
+            <div class="hero-amount">
+                <span class="currency mono">$</span>
+                <span class="mono" id="stat-total">0</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-stat">
+                    <div class="hero-stat-val mono" id="stat-items">0</div>
+                    <div class="hero-stat-lbl">Items</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-val mono" id="stat-people">0</div>
+                    <div class="hero-stat-lbl">Personas</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-val mono" id="stat-perperson">$0</div>
+                    <div class="hero-stat-lbl">Promedio</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personas -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title"><svg><use href="#i-users"/></svg> Personas</div>
+            <div class="card-count" id="cnt-people">0</div>
+        </div>
+        <div class="people-tags" id="peopleTags"></div>
+        <div class="input-row">
+            <input type="text" id="inPerson" placeholder="Agregar persona…" autocomplete="off">
+            <button class="btn btn-primary" onclick="addPerson()" aria-label="Agregar persona">
+                <svg><use href="#i-plus"/></svg> Agregar
+            </button>
+        </div>
+    </div>
+
+    <!-- Agregar item -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title"><svg><use href="#i-receipt"/></svg> Nuevo ítem</div>
+        </div>
+        <div class="input-row" style="margin-bottom:8px">
+            <input type="text" id="inItem" placeholder="Ej: Lomo a lo pobre" autocomplete="off" style="flex:3">
+            <input type="number" id="inPrice" placeholder="$ Precio" min="0" step="1" style="flex:2">
+            <input type="number" id="inQty" placeholder="Cant." min="1" step="1" value="1" style="flex:1; min-width:60px">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="addItem()">
+            <svg><use href="#i-plus"/></svg> Agregar ítem
+        </button>
+    </div>
+
+    <!-- Lista de items -->
+    <div class="card" id="itemsCard" style="display:none">
+        <div class="card-head">
+            <div class="card-title"><svg><use href="#i-list"/></svg> Detalle de la cuenta</div>
+            <div id="items-status" class="card-count">0</div>
+        </div>
+        <div class="items-list" id="itemsList"></div>
+
+        <!-- totales -->
+        <div id="totalsBlock"></div>
+
+        <!-- config descuento / propina -->
+        <div class="cfg-block">
+            <div class="cfg-group disc">
+                <div class="cfg-label"><svg><use href="#i-tag"/></svg> Descuento</div>
+                <div class="cfg-input-wrap">
+                    <input type="number" id="inDiscount" placeholder="0" min="0" max="100" step="0.1" oninput="renderAll()">
+                </div>
+                <span class="cfg-hint">sobre ítems marcados</span>
+            </div>
+            <div class="cfg-group tip">
+                <div class="cfg-label"><svg><use href="#i-handshake"/></svg> Propina</div>
+                <div class="cfg-input-wrap">
+                    <input type="number" id="inTip" placeholder="10" min="0" max="100" step="0.1" oninput="renderAll()">
+                </div>
+                <span class="cfg-hint">sobre ítems marcados</span>
+                <button id="tipToggleBtn" class="toggle-pill" onclick="toggleTipBase()" style="display:none">
+                    <span id="tipToggleLabel">sobre precio c/ descuento</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen personas -->
+    <div class="card" id="peopleCard" style="display:none">
+        <div class="card-head">
+            <div class="card-title"><svg><use href="#i-wallet"/></svg> Quién paga cuánto</div>
+        </div>
+        <div class="person-chips" id="personChips"></div>
+    </div>
+
+    <!-- Compartir -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title"><svg><use href="#i-share"/></svg> Compartir</div>
+        </div>
+        <div class="share-grid">
+            <button class="btn btn-ghost" onclick="openModal()">
+                <svg><use href="#i-receipt"/></svg> Ver resumen
+            </button>
+            <button class="btn btn-green" onclick="copyWhatsapp()">
+                <svg><use href="#i-message"/></svg> WhatsApp
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal bottom sheet -->
+<div id="modal" class="modal" onclick="closeModalOutside(event)">
+    <div class="modal-box">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-title">
+                <svg><use href="#i-receipt"/></svg>
+                Resumen de la cuenta
+            </div>
+            <button class="icon-btn" onclick="closeModal()" aria-label="Cerrar">
+                <svg><use href="#i-x"/></svg>
+            </button>
+        </div>
+        <div id="previewWrap"></div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="downloadImage()">
+                <svg><use href="#i-image"/></svg> Imagen
+            </button>
+            <button class="btn btn-green" onclick="copyWhatsapp()">
+                <svg><use href="#i-message"/></svg> WhatsApp
+            </button>
+            <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let people = [];
+let items  = [];
+let tipAfterDiscount = true;
+
+const discPct = () => parseFloat(document.getElementById('inDiscount').value) || 0;
+const tipPct  = () => parseFloat(document.getElementById('inTip').value)      || 0;
+const fmt = n  => Math.round(n).toLocaleString('es-CL');
+
+/* ── cálculos ── */
+function personItemBase(item, p) { const unitPrice = item.unitPrice || item.price; return unitPrice * (item.qty[p] || 0); }
+
+function personTotal(p) {
+    return items.reduce((sum, item) => {
+        const base = personItemBase(item, p);
+        const disc = item.applyDiscount ? base * discPct() / 100 : 0;
+        const postDisc = base - disc;
+        const tipBase = (item.applyTip && item.applyDiscount && !tipAfterDiscount) ? base : postDisc;
+        const tip = item.applyTip ? tipBase * tipPct() / 100 : 0;
+        return sum + postDisc + tip;
+    }, 0);
+}
+
+function personSubtotal(p)  { return items.reduce((s,i) => s + personItemBase(i,p), 0); }
+
+function personDiscount(p) {
+    return items.reduce((s,i) => {
+        if (!i.applyDiscount) return s;
+        return s + personItemBase(i,p) * discPct() / 100;
+    }, 0);
+}
+
+function personTip(p) {
+    return items.reduce((s,i) => {
+        if (!i.applyTip) return s;
+        const base = personItemBase(i,p);
+        const disc = i.applyDiscount ? base * discPct() / 100 : 0;
+        const tipBase = (i.applyDiscount && !tipAfterDiscount) ? base : (base - disc);
+        return s + tipBase * tipPct() / 100;
+    }, 0);
+}
+
+function grandTotal() {
+    return items.reduce((s,i) => {
+        const base = i.price;
+        const disc = i.applyDiscount ? base * discPct() / 100 : 0;
+        const postDisc = base - disc;
+        const tipBase = (i.applyTip && i.applyDiscount && !tipAfterDiscount) ? base : postDisc;
+        const tip = i.applyTip ? tipBase * tipPct() / 100 : 0;
+        return s + postDisc + tip;
+    }, 0);
+}
+
+/* ── agregar / quitar ── */
+function addPerson() {
+    const inp = document.getElementById('inPerson');
+    const name = inp.value.trim();
+    if (!name) { inp.focus(); return; }
+    if (people.includes(name)) { alert('Esa persona ya existe'); return; }
+    people.push(name);
+    items.forEach(i => { i.qty[name] = 0; if (!i.units) { i.units = 1; i.unitPrice = i.price; } });
+    inp.value = '';
+    renderAll();
+}
+
+function removePerson(name) {
+    people = people.filter(p => p !== name);
+    items.forEach(i => delete i.qty[name]);
+    renderAll();
+}
+
+function addItem() {
+    const iInp = document.getElementById('inItem');
+    const pInp = document.getElementById('inPrice');
+    const qInp = document.getElementById('inQty');
+    const name  = iInp.value.trim();
+    const price = parseFloat(pInp.value);
+    const qty   = parseInt(qInp.value) || 1;
+    if (!name || isNaN(price) || price <= 0) { alert('Completa nombre y precio'); return; }
+
+    // buscar si ya existe un item con el mismo nombre (case-insensitive)
+    const existing = items.find(i => i.name.toLowerCase() === name.toLowerCase());
+    if (existing) {
+        // mismo nombre: acumular unidades (asumimos mismo precio unitario)
+        existing.units     += qty;
+        existing.unitPrice  = price; // usar el último precio ingresado como referencia
+        existing.price      = Math.round(existing.unitPrice * existing.units);
+    } else {
+        const pQty = {};
+        people.forEach(p => pQty[p] = 0);
+        items.push({ id: Date.now(), name, price: price * qty, unitPrice: price, units: qty, qty: pQty, applyDiscount:false, applyTip:false });
+    }
+
+    iInp.value = ''; pInp.value = ''; qInp.value = '1';
+    iInp.focus();
+    renderAll();
+}
+
+function removeItem(id) {
+    items = items.filter(i => i.id !== id);
+    renderAll();
+}
+
+function setQty(id, person, val) {
+    const item = items.find(i => i.id === id);
+    if (item) item.qty[person] = parseFloat(val) || 0;
+    renderBadges();
+    renderTotals();
+    renderStats();
+    renderPeopleChips();
+}
+
+function renderBadges() {
+    let allOk = true;
+    let anyProblem = false;
+
+    items.forEach(item => {
+        const el = document.getElementById('badge-' + item.id);
+        const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
+        const total    = item.units || 1;
+        const ok       = assigned === total;
+        const over     = assigned > total;
+
+        if (!ok) allOk = false;
+        if (!ok || over) anyProblem = true;
+
+        if (!el || people.length === 0) return;
+        if (ok) {
+            el.className = 'assign-badge ok';
+            el.innerHTML = '<svg><use href="#i-check"/></svg>' + assigned + '/' + total;
+        } else if (over) {
+            el.className = 'assign-badge over';
+            el.innerHTML = '<svg><use href="#i-alert"/></svg>' + assigned + '/' + total + ' · de más';
+        } else {
+            el.className = 'assign-badge warn';
+            el.innerHTML = '<svg><use href="#i-alert"/></svg>' + assigned + '/' + total + ' · faltan ' + (total - assigned);
+        }
+    });
+
+    // actualizar estado del card header
+    const statusEl = document.getElementById('items-status');
+    if (!statusEl) return;
+    if (people.length === 0 || items.length === 0) {
+        statusEl.className = 'card-count neutral';
+        statusEl.innerHTML = items.length;
+    } else if (allOk) {
+        statusEl.className = 'card-count all-ok';
+        statusEl.innerHTML = '<svg><use href="#i-check"/></svg> Todo asignado';
+    } else {
+        const pending = items.filter(item => {
+            const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
+            return assigned !== (item.units || 1);
+        }).length;
+        statusEl.className = 'card-count has-warn';
+        statusEl.innerHTML = '<svg><use href="#i-alert"/></svg> ' + pending + ' sin completar';
+    }
+}
+
+function toggleDiscount(id, val) {
+    const item = items.find(i => i.id === id);
+    if (item) { item.applyDiscount = val; renderAll(); }
+}
+
+function toggleTip(id, val) {
+    const item = items.find(i => i.id === id);
+    if (item) { item.applyTip = val; renderAll(); }
+}
+
+function toggleTipBase() {
+    tipAfterDiscount = !tipAfterDiscount;
+    const btn = document.getElementById('tipToggleBtn');
+    document.getElementById('tipToggleLabel').textContent = tipAfterDiscount
+        ? 'sobre precio c/ descuento'
+        : 'sobre precio s/ descuento';
+    btn.classList.toggle('pre', !tipAfterDiscount);
+    renderAll();
+}
+
+/* ── escape util ── */
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[c]);
+}
+
+/* ── render ── */
+function renderAll() {
+    renderPeopleTags();
+    renderItems();
+    renderTotals();
+    renderStats();
+    renderPeopleChips();
+}
+
+function renderPeopleTags() {
+    const wrap = document.getElementById('peopleTags');
+    wrap.innerHTML = people.map(p => `
+        <div class="p-tag">${esc(p)}
+            <button class="p-tag-x" onclick="removePerson('${esc(p).replace(/'/g,"\\'")}')" aria-label="Quitar ${esc(p)}">
+                <svg><use href="#i-x"/></svg>
+            </button>
+        </div>`).join('');
+    document.getElementById('cnt-people').textContent = people.length;
+}
+
+function renderItems() {
+    const d = discPct(), t = tipPct();
+    const hasDisc = d > 0, hasTip = t > 0;
+
+    const toggleBtn = document.getElementById('tipToggleBtn');
+    toggleBtn.style.display = (hasDisc && hasTip) ? 'inline-flex' : 'none';
+
+    const card = document.getElementById('itemsCard');
+    if (items.length === 0) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    document.getElementById('cnt-items') && (document.getElementById('cnt-items').textContent = items.length);
+    setTimeout(renderBadges, 0); // after DOM update
+
+    document.getElementById('itemsList').innerHTML = items.map(item => {
+        const peopleQty = people.map(p => `
+            <div class="person-qty">
+                <label>${esc(p)}</label>
+                <input type="number" min="0" step="1"
+                    value="${item.qty[p] > 0 ? item.qty[p] : ''}"
+                    placeholder="0"
+                    oninput="setQty(${item.id},'${esc(p).replace(/'/g,"\\'")}',this.value)">
+            </div>
+        `).join('');
+
+        const flags = (hasDisc || hasTip) ? `
+            <div class="item-flags">
+                ${hasDisc ? `<label class="flag-chip disc ${item.applyDiscount?'active':''}">
+                    <input type="checkbox" ${item.applyDiscount?'checked':''} onchange="toggleDiscount(${item.id},this.checked)">
+                    <svg><use href="#i-tag"/></svg> Descuento
+                </label>` : ''}
+                ${hasTip ? `<label class="flag-chip tip ${item.applyTip?'active':''}">
+                    <input type="checkbox" ${item.applyTip?'checked':''} onchange="toggleTip(${item.id},this.checked)">
+                    <svg><use href="#i-handshake"/></svg> Propina
+                </label>` : ''}
+            </div>` : '';
+
+        const noPeople = people.length === 0
+            ? '<div class="item-empty">Agrega personas para asignar cantidades ↑</div>'
+            : `<div class="item-people">${peopleQty}</div>`;
+
+        const unitInfo = (item.units > 1)
+            ? `<span style="font-size:0.72rem;color:var(--text-muted);margin-left:4px">${item.units}× $${fmt(item.unitPrice)}c/u</span>`
+            : '';
+
+        // badge de asignación
+        const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
+        const total    = item.units || 1;
+        let badge = '';
+        if (people.length > 0) {
+            if (assigned === total) {
+                badge = `<span id="badge-${item.id}" class="assign-badge ok"><svg><use href="#i-check"/></svg>${assigned}/${total}</span>`;
+            } else if (assigned > total) {
+                badge = `<span id="badge-${item.id}" class="assign-badge over"><svg><use href="#i-alert"/></svg>${assigned}/${total} · de más</span>`;
+            } else {
+                const missing = total - assigned;
+                badge = `<span id="badge-${item.id}" class="assign-badge warn"><svg><use href="#i-alert"/></svg>${assigned}/${total} · faltan ${missing}</span>`;
+            }
+        }
+
+        return `<div class="item-row">
+            <div class="item-row-top">
+                <span class="item-name">${esc(item.name)}</span>
+                <span class="item-price mono" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end">
+                    $${fmt(item.price)}${unitInfo}
+                    ${badge}
+                </span>
+                <button class="btn-del" onclick="removeItem(${item.id})" aria-label="Eliminar">
+                    <svg><use href="#i-trash"/></svg>
+                </button>
+            </div>
+            ${flags}
+            ${noPeople}
+        </div>`;
+    }).join('');
+}
+
+function renderTotals() {
+    if (items.length === 0) return;
+    const d = discPct(), t = tipPct();
+    const discItems = items.filter(i => i.applyDiscount);
+    const tipItems  = items.filter(i => i.applyTip);
+
+    const grandSub  = items.reduce((s,i) => s+i.price, 0);
+    const grandDisc = discItems.reduce((s,i) => s + i.price*d/100, 0);
+    const grandTip  = tipItems.reduce((s,i) => {
+        const b=i.price, d2=i.applyDiscount?b*d/100:0;
+        const tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);
+        return s+tb*t/100;
+    }, 0);
+    const gTotal = grandSub - grandDisc + grandTip;
+
+    const subPeople = people.length ? `<div class="tl-people">${people.map(p=>
+        `<span class="tl-person">${esc(p)} <b class="mono">$${fmt(personSubtotal(p))}</b></span>`
+    ).join('')}</div>` : '';
+
+    const discPeople = people.length && discItems.length ? `<div class="tl-people">${people.map(p=>{
+        const pd=personDiscount(p); return pd>0?`<span class="tl-person">${esc(p)} <b class="mono">-$${fmt(pd)}</b></span>`:''
+    }).join('')}</div>` : '';
+
+    const tipPeople = people.length && tipItems.length ? `<div class="tl-people">${people.map(p=>{
+        const pt=personTip(p); return pt>0?`<span class="tl-person">${esc(p)} <b class="mono">+$${fmt(pt)}</b></span>`:''
+    }).join('')}</div>` : '';
+
+    const totalPeople = people.length ? `<div class="tl-people">${people.map(p=>
+        `<span class="tl-person">${esc(p)} <b class="mono">$${fmt(personTotal(p))}</b></span>`
+    ).join('')}</div>` : '';
+
+    let html = `<div class="totals-block">
+        <div class="total-line subtotal">
+            <div class="tl-label"><div class="tl-head">Subtotal</div>${subPeople}</div>
+            <div class="tl-val mono">$${fmt(grandSub)}</div>
+        </div>`;
+
+    if (d > 0 && discItems.length > 0) {
+        html += `<div class="total-line disc-line">
+            <div class="tl-label"><div class="tl-head"><svg style="width:12px;height:12px"><use href="#i-tag"/></svg> Descuento ${d}%</div>${discPeople}</div>
+            <div class="tl-val mono">-$${fmt(grandDisc)}</div>
+        </div>`;
+    }
+
+    if (t > 0 && tipItems.length > 0) {
+        html += `<div class="total-line tip-line">
+            <div class="tl-label"><div class="tl-head"><svg style="width:12px;height:12px"><use href="#i-handshake"/></svg> Propina ${t}%</div>${tipPeople}</div>
+            <div class="tl-val mono">+$${fmt(grandTip)}</div>
+        </div>`;
+    }
+
+    html += `<div class="total-line grand">
+        <div class="tl-label"><div class="tl-head">Total a pagar</div>${totalPeople}</div>
+        <div class="tl-val mono">$${fmt(gTotal)}</div>
+    </div></div>`;
+
+    document.getElementById('totalsBlock').innerHTML = html;
+}
+
+function renderStats() {
+    const gt = grandTotal();
+    document.getElementById('stat-total').textContent  = fmt(gt);
+    document.getElementById('stat-items').textContent  = items.length;
+    document.getElementById('stat-people').textContent = people.length;
+    const avg = people.length > 0 ? gt / people.length : 0;
+    document.getElementById('stat-perperson').textContent = '$' + fmt(avg);
+}
+
+function renderPeopleChips() {
+    const card = document.getElementById('peopleCard');
+    if (people.length === 0 || items.length === 0) { card.style.display='none'; return; }
+    card.style.display = 'block';
+    document.getElementById('personChips').innerHTML = people.map(p => `
+        <div class="p-chip">
+            <div class="pn">${esc(p)}</div>
+            <div class="pa mono">$${fmt(personTotal(p))}</div>
+            <div class="pl">a pagar</div>
+        </div>`).join('');
+}
+
+/* ── modal ── */
+function buildPreview() {
+    const d = discPct(), t = tipPct();
+    const discItems = items.filter(i=>i.applyDiscount);
+    const tipItems  = items.filter(i=>i.applyTip);
+
+    let html = '<table><thead><tr><th>Item</th><th>Precio</th>';
+    people.forEach(p => html += `<th>${esc(p)}</th>`);
+    html += '</tr></thead><tbody>';
+
+    items.forEach(item => {
+        const tags = (item.applyDiscount?' ·desc':'') + (item.applyTip?' ·prop':'');
+        html += `<tr><td>${esc(item.name)}${tags}</td><td>$${fmt(item.price)}</td>`;
+        people.forEach(p => { const v=item.qty[p]||0; html+=`<td>${v>0?v:''}</td>`; });
+        html += '</tr>';
+    });
+
+    const grandSub = items.reduce((s,i)=>s+i.price,0);
+    html += `<tr class="p-sub"><td>Subtotal</td><td>$${fmt(grandSub)}</td>`;
+    people.forEach(p => html+=`<td>$${fmt(personSubtotal(p))}</td>`);
+    html += '</tr>';
+
+    if (d>0 && discItems.length>0) {
+        const gd = discItems.reduce((s,i)=>s+i.price*d/100,0);
+        html += `<tr class="p-disc"><td>Descuento (${d}%)</td><td>-$${fmt(gd)}</td>`;
+        people.forEach(p=>{const pd=personDiscount(p);html+=`<td>${pd>0?'-$'+fmt(pd):''}</td>`;});
+        html += '</tr>';
+    }
+
+    if (t>0 && tipItems.length>0) {
+        const gt = tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0);
+        html += `<tr class="p-tip"><td>Propina (${t}%)</td><td>+$${fmt(gt)}</td>`;
+        people.forEach(p=>{const pt=personTip(p);html+=`<td>${pt>0?'+$'+fmt(pt):''}</td>`;});
+        html += '</tr>';
+    }
+
+    html += `<tr class="p-tot"><td>TOTAL</td><td>$${fmt(grandTotal())}</td>`;
+    people.forEach(p=>html+=`<td>$${fmt(personTotal(p))}</td>`);
+    html += '</tr></tbody></table>';
+    return html;
+}
+
+function openModal() {
+    if (!people.length || !items.length) { alert('Agrega personas e ítems primero'); return; }
+    document.getElementById('previewWrap').innerHTML = buildPreview();
+    document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target===document.getElementById('modal')) closeModal(); }
+
+function downloadImage() {
+    const d = discPct(), t = tipPct();
+    const discItems = items.filter(i => i.applyDiscount);
+    const tipItems  = items.filter(i => i.applyTip);
+
+    // ── layout ──
+    const scale    = 2;
+    const W        = 640;
+    const padX     = 28;
+    const colW     = 120;
+    const nameColW = W - padX * 2 - colW - people.length * colW;
+    const rowH     = 38;
+    const headH    = 48;
+    const fontSize = 13;
+
+    // contar filas: items + subtotal + desc? + tip? + total
+    const extraRows = 1 + (d > 0 && discItems.length > 0 ? 1 : 0) + (t > 0 && tipItems.length > 0 ? 1 : 0) + 1;
+    const totalRows = items.length + extraRows;
+    const H = 56 + headH + totalRows * rowH + 32; // title + header + rows + padding
+
+    const canvas  = document.createElement('canvas');
+    canvas.width  = W * scale;
+    canvas.height = H * scale;
+    const ctx     = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    // helpers
+    const hex = v => v;
+    function rect(x, y, w, h, fill, radius = 0) {
+        ctx.fillStyle = fill;
+        if (radius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, radius);
+            ctx.fill();
+        } else {
+            ctx.fillRect(x, y, w, h);
+        }
+    }
+    function text(str, x, y, { size = fontSize, weight = '500', color = '#1a1a2e', align = 'left', maxW } = {}) {
+        ctx.font = `${weight} ${size}px Inter, system-ui, sans-serif`;
+        ctx.fillStyle = color;
+        ctx.textAlign = align;
+        ctx.textBaseline = 'middle';
+        if (maxW) {
+            // truncate with ellipsis
+            let s = String(str);
+            while (ctx.measureText(s).width > maxW && s.length > 1) s = s.slice(0, -1);
+            if (s !== String(str)) s = s.slice(0, -1) + '…';
+            ctx.fillText(s, x, y);
+        } else {
+            ctx.fillText(String(str), x, y);
+        }
+    }
+    function line(x1, y1, x2, y2, color = '#E5E7EB') {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+
+    // ── fondo ──
+    rect(0, 0, W, H, '#ffffff');
+
+    // ── título ──
+    let y = 20;
+    text('Di', padX, y + 10, { size: 18, weight: '800', color: '#111' });
+    ctx.font = '800 18px Inter, system-ui, sans-serif';
+    const diW = ctx.measureText('Di').width;
+    text('Bill', padX + diW, y + 10, { size: 18, weight: '800', color: '#4F46E5' });
+    text('Cuenta del restaurante', padX + diW + ctx.measureText('Bill').width + 12, y + 11, { size: 12, weight: '500', color: '#9CA3AF' });
+    y += 36;
+
+    // ── cabecera de tabla ──
+    rect(padX, y, W - padX * 2, headH, '#F4F4F8', 8);
+    const colMuted = '#6B7280';
+    const colDark  = '#1F2937';
+    text('ITEM',    padX + 10,                           y + headH / 2, { size: 10, weight: '700', color: colMuted });
+    text('PRECIO',  padX + 10 + nameColW + colW * 0.5,  y + headH / 2, { size: 10, weight: '700', color: colMuted, align: 'center' });
+    people.forEach((p, i) => {
+        const cx = padX + 10 + nameColW + colW + colW * i + colW * 0.5;
+        text(p.toUpperCase(), cx, y + headH / 2, { size: 10, weight: '700', color: '#4F46E5', align: 'center', maxW: colW - 8 });
+    });
+    y += headH;
+
+    // ── filas de items ──
+    items.forEach((item, idx) => {
+        const bg = idx % 2 === 0 ? '#ffffff' : '#F9FAFB';
+        rect(padX, y, W - padX * 2, rowH, bg);
+        line(padX, y + rowH, W - padX, y + rowH);
+
+        const tags = (item.applyDiscount ? ' · desc' : '') + (item.applyTip ? ' · prop' : '');
+        const label = item.name + tags + (item.units > 1 ? ` ×${item.units}` : '');
+        text(label, padX + 10, y + rowH / 2, { weight: '600', color: colDark, maxW: nameColW - 8 });
+        text('$' + fmt(item.price), padX + 10 + nameColW + colW * 0.5, y + rowH / 2, { weight: '700', color: '#4F46E5', align: 'center' });
+
+        people.forEach((p, i) => {
+            const v = item.qty[p] || 0;
+            const cx = padX + 10 + nameColW + colW + colW * i + colW * 0.5;
+            if (v > 0) text(v, cx, y + rowH / 2, { weight: '700', color: colDark, align: 'center' });
+        });
+        y += rowH;
+    });
+
+    // ── función para filas de totales ──
+    function totalRow(label, getVal, getPersonVal, bg, textColor, bold = false) {
+        rect(padX, y, W - padX * 2, rowH, bg);
+        line(padX, y + rowH, W - padX, y + rowH, '#E5E7EB');
+        const w = bold ? '700' : '600';
+        text(label, padX + 10, y + rowH / 2, { weight: w, color: textColor, maxW: nameColW - 8 });
+        text(getVal(), padX + 10 + nameColW + colW * 0.5, y + rowH / 2, { weight: w, color: textColor, align: 'center' });
+        people.forEach((p, i) => {
+            const cx = padX + 10 + nameColW + colW + colW * i + colW * 0.5;
+            text(getPersonVal(p), cx, y + rowH / 2, { weight: w, color: textColor, align: 'center' });
+        });
+        y += rowH;
+    }
+
+    const grandSub = items.reduce((s,i) => s + i.price, 0);
+
+    // subtotal
+    totalRow('Subtotal',
+        () => '$' + fmt(grandSub),
+        p  => '$' + fmt(personSubtotal(p)),
+        '#EEF2FF', '#1E1B4B', true);
+
+    // descuento
+    if (d > 0 && discItems.length > 0) {
+        const gd = discItems.reduce((s,i) => s + i.price * d / 100, 0);
+        totalRow(`Descuento ${d}%`,
+            () => '-$' + fmt(gd),
+            p  => { const pd = personDiscount(p); return pd > 0 ? '-$' + fmt(pd) : ''; },
+            '#FEF3C7', '#92400E', false);
+    }
+
+    // propina
+    if (t > 0 && tipItems.length > 0) {
+        const gt = tipItems.reduce((s,i) => { const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2); return s+tb*t/100; }, 0);
+        totalRow(`Propina ${t}%`,
+            () => '+$' + fmt(gt),
+            p  => { const pt = personTip(p); return pt > 0 ? '+$' + fmt(pt) : ''; },
+            '#DCFCE7', '#14532D', false);
+    }
+
+    // total — fila con fondo indigo
+    rect(padX, y, W - padX * 2, rowH + 4, '#4F46E5', 8);
+    text('TOTAL', padX + 10, y + (rowH + 4) / 2, { size: 14, weight: '800', color: '#fff' });
+    text('$' + fmt(grandTotal()), padX + 10 + nameColW + colW * 0.5, y + (rowH + 4) / 2, { size: 14, weight: '800', color: '#fff', align: 'center' });
+    people.forEach((p, i) => {
+        const cx = padX + 10 + nameColW + colW + colW * i + colW * 0.5;
+        text('$' + fmt(personTotal(p)), cx, y + (rowH + 4) / 2, { size: 14, weight: '800', color: '#fff', align: 'center' });
+    });
+
+    // ── exportar ──
+    const dataURL = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href     = dataURL;
+    a.download = 'dibill-cuenta.png';
+    a.click();
+}
+
+function copyWhatsapp() {
+    if (!people.length || !items.length) { alert('Agrega personas e ítems primero'); return; }
+    const d = discPct(), t = tipPct();
+    let text = '🧾 *CUENTA — DiBill*\n\n';
+    items.forEach(i => {
+        text += `• ${i.name}: $${fmt(i.price)}`;
+        if (i.applyDiscount) text += '  (desc)';
+        if (i.applyTip)      text += '  (prop)';
+        text += '\n';
+    });
+    if (d>0) text += `\nDescuento: ${d}%\n`;
+    if (t>0) text += `Propina: ${t}%\n`;
+    text += '\n*LO QUE PAGA CADA UNO:*\n';
+    people.forEach(p => {
+        const pedidos = items.filter(i=>(i.qty[p]||0)>0).map(i=>i.name).join(', ');
+        text += `• *${p}*: $${fmt(personTotal(p))}`;
+        if (pedidos) text += ` _(${pedidos})_`;
+        text += '\n';
+    });
+    text += `\n*Total general:* $${fmt(grandTotal())}`;
+    navigator.clipboard.writeText(text)
+        .then(()=>alert('✅ Copiado — pégalo en WhatsApp'))
+        .catch(()=>prompt('Copia esto:',text));
+}
+
+/* ── teclado ── */
+document.getElementById('inPerson').addEventListener('keydown', e => { if(e.key==='Enter') addPerson(); });
+document.getElementById('inItem').addEventListener('keydown',   e => { if(e.key==='Enter') document.getElementById('inPrice').focus(); });
+document.getElementById('inPrice').addEventListener('keydown',  e => { if(e.key==='Enter') document.getElementById('inQty').focus(); });
+document.getElementById('inQty').addEventListener('keydown',   e => { if(e.key==='Enter') addItem(); });
+
+renderAll();
+
+/* ── PWA Install ── */
+let deferredPrompt = null;
+const installBtn   = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'flex';
+});
+
+installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') installBtn.style.display = 'none';
+    deferredPrompt = null;
+});
+
+window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+});
+
+/* ── Service Worker (cache offline) ── */
+if ('serviceWorker' in navigator) {
+    const swCode = `
+        const CACHE = 'dibill-v1';
+        self.addEventListener('install', e => {
+            e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+            self.skipWaiting();
+        });
+        self.addEventListener('activate', e => {
+            e.waitUntil(caches.keys().then(keys =>
+                Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+            ));
+            self.clients.claim();
+        });
+        self.addEventListener('fetch', e => {
+            e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+        });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swURL  = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swURL, { scope: '/' }).catch(() => {});
+}
+</script>
+</body>
+</html>
