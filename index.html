@@ -1474,7 +1474,7 @@ function openModal() {
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
 function closeModalOutside(e) { if (e.target===document.getElementById('modal')) closeModal(); }
 
-function downloadImage() {
+function buildCanvas() {
     const d = discPct(), t = tipPct();
     const discItems = items.filter(i => i.applyDiscount);
     const tipItems  = items.filter(i => i.applyTip);
@@ -1487,9 +1487,8 @@ function downloadImage() {
     const fontSize = 12;
     const headerFontSize = 10;
 
-    // calcular ancho dinámico según personas
-    const nameColW = 180;
-    const priceColW = 90;
+    const nameColW   = 180;
+    const priceColW  = 90;
     const personColW = 90;
     const W = padX * 2 + nameColW + priceColW + people.length * personColW;
 
@@ -1505,11 +1504,9 @@ function downloadImage() {
     const ctx = canvas.getContext('2d');
     ctx.scale(scale, scale);
 
-    // fondo blanco
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, H);
 
-    // helpers
     function txt(str, x, y, { size=fontSize, weight='500', color='#111827', align='left', maxW=9999 } = {}) {
         ctx.font = `${weight} ${size}px Inter, system-ui, sans-serif`;
         ctx.fillStyle = color;
@@ -1528,54 +1525,39 @@ function downloadImage() {
 
     function fillRect(x, y, w, h, color, radius=0) {
         ctx.fillStyle = color;
-        if (radius > 0) {
-            ctx.beginPath(); ctx.roundRect(x, y, w, h, radius); ctx.fill();
-        } else {
-            ctx.fillRect(x, y, w, h);
-        }
+        if (radius > 0) { ctx.beginPath(); ctx.roundRect(x, y, w, h, radius); ctx.fill(); }
+        else ctx.fillRect(x, y, w, h);
     }
 
-    // col X positions
     const col = {
-        name:  padX,
-        price: padX + nameColW,
+        name:   padX,
+        price:  padX + nameColW,
         people: i => padX + nameColW + priceColW + i * personColW,
     };
 
-    // ── título ──
     let y = padY;
     ctx.font = '800 20px Inter, system-ui, sans-serif';
-    ctx.fillStyle = '#111';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#111'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillText('Di', col.name, y + 14);
     const diW = ctx.measureText('Di').width;
     ctx.fillStyle = '#4F46E5';
     ctx.fillText('Bill', col.name + diW, y + 14);
     y += 40;
 
-    // ── header ──
     fillRect(padX, y, W - padX * 2, headH, '#F4F4F8', 8);
     const muted = '#6B7280', dark = '#1F2937';
-
-    txt('ITEM',   col.name  + 10,              y + headH/2, { size: headerFontSize, weight:'700', color: muted });
-    txt('PRECIO', col.price + priceColW/2,     y + headH/2, { size: headerFontSize, weight:'700', color: muted, align:'center' });
+    txt('ITEM',   col.name  + 10,           y + headH/2, { size: headerFontSize, weight:'700', color: muted });
+    txt('PRECIO', col.price + priceColW/2,  y + headH/2, { size: headerFontSize, weight:'700', color: muted, align:'center' });
     people.forEach((p, i) => {
-        txt(p, col.people(i) + personColW/2, y + headH/2, {
-            size: headerFontSize, weight:'700', color:'#4F46E5',
-            align:'center', maxW: personColW - 8
-        });
+        txt(p, col.people(i) + personColW/2, y + headH/2, { size: headerFontSize, weight:'700', color:'#4F46E5', align:'center', maxW: personColW - 8 });
     });
     y += headH;
 
-    // ── items ──
     items.forEach((item, idx) => {
         fillRect(padX, y, W - padX * 2, rowH, idx % 2 === 0 ? '#fff' : '#F9FAFB');
         hline(y + rowH);
-
-        txt(item.name, col.name + 10,           y + rowH/2, { weight:'600', color: dark, maxW: nameColW - 16 });
-        txt('$'+fmt(item.price),      col.price + priceColW/2,  y + rowH/2, { weight:'700', color:'#4F46E5', align:'center', maxW: priceColW - 8 });
-
+        txt(item.name, col.name + 10, y + rowH/2, { weight:'600', color: dark, maxW: nameColW - 16 });
+        txt('$'+fmt(item.price), col.price + priceColW/2, y + rowH/2, { weight:'700', color:'#4F46E5', align:'center', maxW: priceColW - 8 });
         people.forEach((p, i) => {
             const v = item.qty[p] || 0;
             if (v > 0) txt(v, col.people(i) + personColW/2, y + rowH/2, { weight:'700', color: dark, align:'center' });
@@ -1583,13 +1565,12 @@ function downloadImage() {
         y += rowH;
     });
 
-    // ── fila helper ──
     function totalRow(label, grandVal, personFn, bg, color, bold=false) {
         fillRect(padX, y, W - padX * 2, rowH, bg);
         hline(y + rowH, '#E5E7EB');
         const w = bold ? '700' : '600';
-        txt(label,     col.name  + 10,           y + rowH/2, { size: fontSize, weight: w, color, maxW: nameColW - 16 });
-        txt(grandVal,  col.price + priceColW/2,  y + rowH/2, { size: fontSize, weight: w, color, align:'center', maxW: priceColW - 8 });
+        txt(label,    col.name  + 10,           y + rowH/2, { size: fontSize, weight: w, color, maxW: nameColW - 16 });
+        txt(grandVal, col.price + priceColW/2,  y + rowH/2, { size: fontSize, weight: w, color, align:'center', maxW: priceColW - 8 });
         people.forEach((p, i) => {
             const v = personFn(p);
             if (v) txt(v, col.people(i) + personColW/2, y + rowH/2, { size: fontSize, weight: w, color, align:'center', maxW: personColW - 8 });
@@ -1604,45 +1585,62 @@ function downloadImage() {
         const gd = discItems.reduce((s,i) => s + i.price*d/100, 0);
         totalRow(`Descuento ${d}%`, '-$'+fmt(gd), p => { const v=personDiscount(p); return v>0?'-$'+fmt(v):''; }, '#FEF3C7', '#92400E');
     }
-
     if (t > 0 && tipItems.length > 0) {
         const gt = tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0);
         totalRow(`Propina ${t}%`, '+$'+fmt(gt), p => { const v=personTip(p); return v>0?'+$'+fmt(v):''; }, '#DCFCE7', '#14532D');
     }
 
-    // ── total final ──
     fillRect(padX, y, W - padX * 2, rowH + 4, '#4F46E5', 8);
-    txt('TOTAL',           col.name  + 10,          y + (rowH+4)/2, { size:13, weight:'800', color:'#fff' });
+    txt('TOTAL',              col.name  + 10,           y + (rowH+4)/2, { size:13, weight:'800', color:'#fff' });
     txt('$'+fmt(grandTotal()), col.price + priceColW/2, y + (rowH+4)/2, { size:13, weight:'800', color:'#fff', align:'center', maxW: priceColW - 8 });
     people.forEach((p, i) => {
         txt('$'+fmt(personTotal(p)), col.people(i) + personColW/2, y + (rowH+4)/2, { size:13, weight:'800', color:'#fff', align:'center', maxW: personColW - 8 });
     });
 
-    // ── copiar al portapapeles ──
+    return canvas;
+}
+
+function downloadImage() {
+    if (!people.length || !items.length) { alert('Agrega personas e ítems primero'); return; }
+    const canvas  = buildCanvas();
+    const dataURL = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = dataURL; a.download = 'dibill-cuenta.png'; a.click();
+}
+
+
+function copyWhatsapp() {
+    if (!people.length || !items.length) { alert('Agrega personas e ítems primero'); return; }
+
+    // generar la misma imagen que downloadImage() y compartirla
+    const canvas = buildCanvas();
+
     canvas.toBlob(blob => {
-        try {
-            const item = new ClipboardItem({ 'image/png': blob });
-            navigator.clipboard.write([item]).then(() => {
-                const btn = document.querySelector('[onclick="downloadImage()"]');
-                const orig = btn.innerHTML;
-                btn.innerHTML = '<svg><use href="#i-check"/></svg> ¡Copiada!';
-                setTimeout(() => btn.innerHTML = orig, 2000);
-            }).catch(() => fallbackDownload(canvas));
-        } catch(e) {
-            fallbackDownload(canvas);
+        const file = new File([blob], 'dibill-cuenta.png', { type: 'image/png' });
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            // compartir imagen nativa (móvil)
+            navigator.share({ files: [file], title: 'DiBill — Cuenta' })
+                .catch(err => { if (err.name !== 'AbortError') fallbackCopyText(buildText()); });
+        } else if (navigator.share) {
+            // share sin archivos (texto)
+            navigator.share({ text: buildText(), title: 'DiBill — Cuenta' })
+                .catch(err => { if (err.name !== 'AbortError') fallbackCopyText(buildText()); });
+        } else {
+            // desktop: copiar imagen al portapapeles
+            try {
+                const item = new ClipboardItem({ 'image/png': blob });
+                navigator.clipboard.write([item]).then(() => {
+                    showBtnFeedback('[onclick="copyWhatsapp()"]', '¡Imagen copiada!');
+                }).catch(() => fallbackCopyText(buildText()));
+            } catch(e) {
+                fallbackCopyText(buildText());
+            }
         }
     }, 'image/png');
 }
 
-function fallbackDownload(canvas) {
-    const a = document.createElement('a');
-    a.href = canvas.toDataURL('image/png');
-    a.download = 'dibill-cuenta.png';
-    a.click();
-}
-
-function copyWhatsapp() {
-    if (!people.length || !items.length) { alert('Agrega personas e ítems primero'); return; }
+function buildText() {
     const d = discPct(), t = tipPct();
     let text = '🧾 *CUENTA — DiBill*\n\n';
     items.forEach(i => {
@@ -1658,29 +1656,25 @@ function copyWhatsapp() {
         if (pedidos) text += ` _(${pedidos})_`;
         text += '\n';
     });
-
-    // intentar Web Share API primero (móvil), luego clipboard
-    if (navigator.share) {
-        navigator.share({ text }).catch(() => fallbackCopyText(text));
-    } else {
-        fallbackCopyText(text);
-    }
+    return text;
 }
+
+function showBtnFeedback(selector, msg) {
+    const btns = document.querySelectorAll(selector);
+    btns.forEach(btn => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = `<svg><use href="#i-check"/></svg> ${msg}`;
+        setTimeout(() => btn.innerHTML = orig, 2500);
+    });
+}
+
 
 function fallbackCopyText(text) {
     navigator.clipboard.writeText(text).then(() => {
-        // feedback visual en el botón
-        const btns = document.querySelectorAll('[onclick="copyWhatsapp()"]');
-        btns.forEach(btn => {
-            const orig = btn.innerHTML;
-            btn.innerHTML = '<svg><use href="#i-check"/></svg> ¡Copiado!';
-            setTimeout(() => btn.innerHTML = orig, 2000);
-        });
+        showBtnFeedback('[onclick="copyWhatsapp()"]', '¡Copiado!');
     }).catch(() => {
-        // último fallback
         const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
         document.body.appendChild(ta);
         ta.focus(); ta.select();
         document.execCommand('copy');
