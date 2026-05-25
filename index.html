@@ -303,14 +303,16 @@
         .item-row:hover { border-color: var(--border-2); }
 
         .item-row-top {
-            display:flex; align-items:center; gap: 12px;
-            margin-bottom: 12px;
+            display:flex; align-items:flex-start; gap: 8px;
+            margin-bottom: 10px; flex-wrap: wrap;
         }
         .item-name {
             font-weight: 600; color: var(--text);
-            font-size: 0.95rem;
-            flex: 1; letter-spacing: -0.01em;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            font-size: 0.78rem;
+            flex: 1; min-width: 0;
+            letter-spacing: -0.01em;
+            word-break: break-word;
+            line-height: 1.35;
         }
         .item-price {
             color: var(--text); font-weight: 700;
@@ -1304,7 +1306,7 @@ function renderItems() {
             : `<div class="item-people">${peopleQty}</div>`;
 
         const unitInfo = (item.units > 1)
-            ? `<span style="font-size:0.72rem;color:var(--text-muted);margin-left:4px">${item.units}× $${fmt(item.unitPrice)}c/u</span>`
+            ? `<span style="font-size:0.68rem;color:var(--text-muted);margin-left:4px;white-space:nowrap">${item.units}× $${fmt(item.unitPrice)}c/u</span>`
             : '';
 
         // badge de asignación
