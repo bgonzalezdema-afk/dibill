@@ -1436,8 +1436,7 @@ function buildPreview() {
     html += '</tr></thead><tbody>';
 
     items.forEach(item => {
-        const tags = (item.applyDiscount?' ·desc':'') + (item.applyTip?' ·prop':'');
-        html += `<tr><td>${esc(item.name)}${tags}</td><td>$${fmt(item.price)}</td>`;
+        html += `<tr><td>${esc(item.name)}</td><td>$${fmt(item.price)}</td>`;
         people.forEach(p => { const v=item.qty[p]||0; html+=`<td>${v>0?v:''}</td>`; });
         html += '</tr>';
     });
@@ -1574,9 +1573,7 @@ function downloadImage() {
         fillRect(padX, y, W - padX * 2, rowH, idx % 2 === 0 ? '#fff' : '#F9FAFB');
         hline(y + rowH);
 
-        const label = item.name + (item.units > 1 ? ` ×${item.units}` : '')
-            + (item.applyDiscount ? ' ·d' : '') + (item.applyTip ? ' ·p' : '');
-        txt(label,                    col.name  + 10,           y + rowH/2, { weight:'600', color: dark, maxW: nameColW - 16 });
+        txt(item.name, col.name + 10,           y + rowH/2, { weight:'600', color: dark, maxW: nameColW - 16 });
         txt('$'+fmt(item.price),      col.price + priceColW/2,  y + rowH/2, { weight:'700', color:'#4F46E5', align:'center', maxW: priceColW - 8 });
 
         people.forEach((p, i) => {
@@ -1649,35 +1646,50 @@ function copyWhatsapp() {
     const d = discPct(), t = tipPct();
     let text = '🧾 *CUENTA — DiBill*\n\n';
     items.forEach(i => {
-        text += `• ${i.name}: $${fmt(i.price)}`;
-        if (i.applyDiscount) text += '  (desc)';
-        if (i.applyTip)      text += '  (prop)';
-        text += '\n';
+        const unidades = i.units > 1 ? ` ×${i.units}` : '';
+        text += `• ${i.name}${unidades}: $${fmt(i.price)}\n`;
     });
-    if (d>0) text += `\nDescuento: ${d}%\n`;
-    if (t>0) text += `Propina: ${t}%\n`;
+    if (d > 0) text += `\nDescuento: ${d}%\n`;
+    if (t > 0) text += `Propina: ${t}%\n`;
     text += '\n*LO QUE PAGA CADA UNO:*\n';
     people.forEach(p => {
-        const pedidos = items.filter(i=>(i.qty[p]||0)>0).map(i=>i.name).join(', ');
+        const pedidos = items.filter(i => (i.qty[p] || 0) > 0).map(i => i.name).join(', ');
         text += `• *${p}*: $${fmt(personTotal(p))}`;
         if (pedidos) text += ` _(${pedidos})_`;
         text += '\n';
     });
-    text += `\n*Total general:* $${fmt(grandTotal())}`;
-    navigator.clipboard.writeText(text)
-        .then(()=>alert('✅ Copiado — pégalo en WhatsApp'))
-        .catch(()=>prompt('Copia esto:',text));
+
+    // intentar Web Share API primero (móvil), luego clipboard
+    if (navigator.share) {
+        navigator.share({ text }).catch(() => fallbackCopyText(text));
+    } else {
+        fallbackCopyText(text);
+    }
 }
 
-/* ── teclado ── */
-document.getElementById('inPerson').addEventListener('keydown', e => { if(e.key==='Enter') addPerson(); });
-document.getElementById('inItem').addEventListener('keydown',   e => { if(e.key==='Enter') document.getElementById('inPrice').focus(); });
-document.getElementById('inPrice').addEventListener('keydown',  e => { if(e.key==='Enter') document.getElementById('inQty').focus(); });
-document.getElementById('inQty').addEventListener('keydown',   e => { if(e.key==='Enter') addItem(); });
+function fallbackCopyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // feedback visual en el botón
+        const btns = document.querySelectorAll('[onclick="copyWhatsapp()"]');
+        btns.forEach(btn => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<svg><use href="#i-check"/></svg> ¡Copiado!';
+            setTimeout(() => btn.innerHTML = orig, 2000);
+        });
+    }).catch(() => {
+        // último fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('✅ Copiado al portapapeles');
+    });
+}
 
-renderAll();
 
-/* ── Importar desde IA ── */
 function openImportModal() {
     document.getElementById('importTextarea').value = '';
     document.getElementById('importResult').style.display = 'none';
