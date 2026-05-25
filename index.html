@@ -303,21 +303,23 @@
         .item-row:hover { border-color: var(--border-2); }
 
         .item-row-top {
-            display:flex; align-items:flex-start; gap: 8px;
-            margin-bottom: 10px; flex-wrap: wrap;
+            display: flex; flex-direction: column;
+            gap: 5px; margin-bottom: 10px;
         }
         .item-name {
             font-weight: 600; color: var(--text);
-            font-size: 0.78rem;
-            flex: 1; min-width: 0;
+            font-size: 0.82rem;
             letter-spacing: -0.01em;
-            overflow-wrap: break-word;
             white-space: normal;
             line-height: 1.35;
         }
+        .item-meta {
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        }
         .item-price {
-            color: var(--text); font-weight: 700;
-            font-size: 1rem; letter-spacing: -0.02em;
+            color: var(--primary-2); font-weight: 800;
+            font-size: 0.88rem; letter-spacing: -0.03em;
+            font-variant-numeric: tabular-nums; white-space: nowrap;
         }
         .btn-del {
             width: 28px; height: 28px;
@@ -1329,13 +1331,13 @@ function renderItems() {
         return `<div class="item-row">
             <div class="item-row-top">
                 <span class="item-name">${esc(item.name)}</span>
-                <span class="item-price mono" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end">
-                    $${fmt(item.price)}${unitInfo}
+                <div class="item-meta">
+                    <span class="item-price mono">$${fmt(item.price)}${unitInfo}</span>
                     ${badge}
-                </span>
-                <button class="btn-del" onclick="removeItem(${item.id})" aria-label="Eliminar">
-                    <svg><use href="#i-trash"/></svg>
-                </button>
+                    <button class="btn-del" onclick="removeItem(${item.id})" aria-label="Eliminar">
+                        <svg><use href="#i-trash"/></svg>
+                    </button>
+                </div>
             </div>
             ${flags}
             ${noPeople}
