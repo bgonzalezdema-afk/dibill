@@ -706,6 +706,86 @@
             display: none;
         }
 
+        /* ─────────────── ASSIGN PANEL ─────────────── */
+        .item-row {
+            cursor: pointer;
+            user-select: none;
+        }
+        .item-row.expanded {
+            cursor: default;
+        }
+        .item-row-header {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .item-chevron {
+            width: 16px; height: 16px; flex-shrink: 0;
+            color: var(--text-muted); transition: transform .2s;
+        }
+        .item-row.expanded .item-chevron {
+            transform: rotate(180deg);
+        }
+        .assign-panel {
+            display: none;
+            margin-top: 12px;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+        .item-row.expanded .assign-panel {
+            display: block;
+        }
+        .split-equal-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px;
+            background: var(--surface-2);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .split-equal-row input[type="checkbox"] {
+            width: 18px; height: 18px;
+            accent-color: var(--primary);
+            flex-shrink: 0; cursor: pointer;
+        }
+        .split-equal-label {
+            font-size: 0.8rem; font-weight: 600; color: var(--text-2);
+            flex: 1;
+        }
+        .split-people {
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .split-person-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 4px;
+            border-bottom: 1px solid var(--border-subtle, #1e1e2a);
+        }
+        .split-person-row:last-child { border-bottom: none; }
+        .split-person-check {
+            width: 16px; height: 16px;
+            accent-color: var(--primary); cursor: pointer; flex-shrink: 0;
+        }
+        .split-person-name {
+            flex: 1; font-size: 0.85rem; font-weight: 600; color: var(--text);
+        }
+        .qty-control {
+            display: flex; align-items: center; gap: 0;
+            background: var(--surface-2); border-radius: 8px;
+            overflow: hidden; border: 1px solid var(--border);
+        }
+        .qty-btn {
+            width: 36px; height: 36px;
+            background: none; border: none; cursor: pointer;
+            color: var(--text); font-size: 1.2rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s; flex-shrink: 0;
+        }
+        .qty-btn:active { background: var(--border); }
+        .qty-btn:disabled { color: var(--text-dim); cursor: default; }
+        .qty-val {
+            min-width: 32px; text-align: center;
+            font-size: 0.95rem; font-weight: 700;
+            color: var(--text); font-variant-numeric: tabular-nums;
+        }
+
         /* ─────────────── ASSIGN BADGE ─────────────── */
         .assign-badge {
             display: inline-flex; align-items: center; gap: 5px;
@@ -1176,6 +1256,71 @@ function setQty(id, person, val) {
     renderPeopleChips();
 }
 
+function toggleItem(id) {
+    const el = document.getElementById('itemrow-' + id);
+    if (el) el.classList.toggle('expanded');
+}
+
+function adjustQty(id, person, delta) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    const newVal = Math.max(0, (item.qty[person] || 0) + delta);
+    item.qty[person] = newVal;
+
+    // actualizar display sin re-render
+    const valEl = document.getElementById(`qtyval-${id}-${person}`);
+    if (valEl) valEl.textContent = newVal;
+
+    // actualizar botón minus
+    const row = valEl?.closest('.qty-control');
+    if (row) row.querySelector('.qty-btn').disabled = newVal <= 0;
+
+    renderBadges();
+    renderTotals();
+    renderStats();
+    renderPeopleChips();
+}
+
+function toggleSplitEqual(id, isChecked) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+
+    const container = document.getElementById('split-people-' + id);
+
+    if (isChecked) {
+        // modo dividir igual: distribuir item.units entre personas marcadas
+        // por defecto marcar todas
+        const units = item.units || 1;
+        const perPerson = Math.floor(units / people.length);
+        const remainder = units % people.length;
+        people.forEach((p, i) => {
+            item.qty[p] = perPerson + (i < remainder ? 1 : 0);
+        });
+        // actualizar UI
+        if (container) {
+            container.querySelectorAll('.qty-val').forEach((el, i) => {
+                el.textContent = item.qty[people[i]];
+            });
+            container.querySelectorAll('.qty-btn').forEach((el, i) => {
+                const p = people[Math.floor(i / 2)];
+                if (i % 2 === 0) el.disabled = item.qty[p] <= 0;
+            });
+        }
+    } else {
+        // desmarcar: resetear cantidades
+        people.forEach(p => item.qty[p] = 0);
+        if (container) {
+            container.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
+            container.querySelectorAll('.qty-btn:first-child').forEach(el => el.disabled = true);
+        }
+    }
+
+    renderBadges();
+    renderTotals();
+    renderStats();
+    renderPeopleChips();
+}
+
 function renderBadges() {
     let allOk = true;
     let anyProblem = false;
@@ -1280,6 +1425,161 @@ function renderItems() {
     if (items.length === 0) { card.style.display = 'none'; return; }
     card.style.display = 'block';
     document.getElementById('cnt-items') && (document.getElementById('cnt-items').textContent = items.length);
+    setTimeout(renderBadges, 0); // after DOM update
+
+    document.getElementById('itemsList').innerHTML = items.map(item => {
+        const unitInfo = (item.units > 1)
+            ? `<span style="font-size:0.65rem;color:var(--text-muted);margin-left:4px;white-space:nowrap">${item.units}× $${fmt(item.unitPrice)}c/u</span>`
+            : '';
+
+        const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
+        const total    = item.units || 1;
+        let badge = '';
+        if (people.length > 0) {
+            if (assigned === total) {
+                badge = `<span id="badge-${item.id}" class="assign-badge ok"><svg><use href="#i-check"/></svg>${assigned}/${total}</span>`;
+            } else if (assigned > total) {
+                badge = `<span id="badge-${item.id}" class="assign-badge over"><svg><use href="#i-alert"/></svg>${assigned}/${total} · de más</span>`;
+            } else {
+                badge = `<span id="badge-${item.id}" class="assign-badge warn"><svg><use href="#i-alert"/></svg>${assigned}/${total} · faltan ${total - assigned}</span>`;
+            }
+        }
+
+        const showDiscChip = hasDisc && discScope === 'manual';
+        const showTipChip  = hasTip  && tipScope  === 'manual';
+        const flags = (showDiscChip || showTipChip) ? `
+            <div class="item-flags">
+                ${showDiscChip ? `<label class="flag-chip disc ${item.applyDiscount?'active':''}">
+                    <input type="checkbox" ${item.applyDiscount?'checked':''} data-action="disc" data-id="${item.id}">
+                    <svg><use href="#i-tag"/></svg> Descuento
+                </label>` : ''}
+                ${showTipChip ? `<label class="flag-chip tip ${item.applyTip?'active':''}">
+                    <input type="checkbox" ${item.applyTip?'checked':''} data-action="tip" data-id="${item.id}">
+                    <svg><use href="#i-handshake"/></svg> Propina
+                </label>` : ''}
+            </div>` : '';
+
+        const peopleRows = people.map(p => {
+            const v = item.qty[p] || 0;
+            return `<div class="split-person-row">
+                <span class="split-person-name">${esc(p)}</span>
+                <div class="qty-control">
+                    <button class="qty-btn" data-action="minus" data-id="${item.id}" data-person="${p}" ${v<=0?'disabled':''}>−</button>
+                    <span class="qty-val" id="qtyval-${item.id}-${p.replace(/\s/g,'_')}">${v}</span>
+                    <button class="qty-btn" data-action="plus" data-id="${item.id}" data-person="${p}">+</button>
+                </div>
+            </div>`;
+        }).join('');
+
+        const assignPanel = people.length > 0 ? `
+            <div class="assign-panel">
+                <div class="split-equal-row" data-action="split-equal" data-id="${item.id}">
+                    <input type="checkbox" id="split-eq-${item.id}">
+                    <span class="split-equal-label">⚡ Dividir en partes iguales</span>
+                </div>
+                <div class="split-people" id="split-people-${item.id}">
+                    ${peopleRows}
+                </div>
+            </div>` : '';
+
+        return `<div class="item-row" id="itemrow-${item.id}" data-action="toggle" data-id="${item.id}">
+            <div class="item-row-header">
+                <svg class="item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                <div style="flex:1;min-width:0">
+                    <div class="item-name">${esc(item.name)}</div>
+                    <div class="item-meta">
+                        <span class="item-price mono">$${fmt(item.price)}${unitInfo}</span>
+                        ${badge}
+                        <button class="btn-del" data-action="delete" data-id="${item.id}" aria-label="Eliminar">
+                            <svg><use href="#i-trash"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            ${flags}
+            ${assignPanel}
+        </div>`;
+    }).join('');
+
+        document.getElementById('cnt-items') && (document.getElementById('cnt-items').textContent = items.length);
+    setTimeout(renderBadges, 0); // after DOM update
+
+    document.getElementById('itemsList').innerHTML = items.map(item => {
+        const unitInfo = (item.units > 1)
+            ? `<span style="font-size:0.65rem;color:var(--text-muted);margin-left:4px;white-space:nowrap">${item.units}× $${fmt(item.unitPrice)}c/u</span>`
+            : '';
+
+        const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
+        const total    = item.units || 1;
+        let badge = '';
+        if (people.length > 0) {
+            if (assigned === total) {
+                badge = `<span id="badge-${item.id}" class="assign-badge ok"><svg><use href="#i-check"/></svg>${assigned}/${total}</span>`;
+            } else if (assigned > total) {
+                badge = `<span id="badge-${item.id}" class="assign-badge over"><svg><use href="#i-alert"/></svg>${assigned}/${total} · de más</span>`;
+            } else {
+                badge = `<span id="badge-${item.id}" class="assign-badge warn"><svg><use href="#i-alert"/></svg>${assigned}/${total} · faltan ${total - assigned}</span>`;
+            }
+        }
+
+        const showDiscChip = hasDisc && discScope === 'manual';
+        const showTipChip  = hasTip  && tipScope  === 'manual';
+        const flags = (showDiscChip || showTipChip) ? `
+            <div class="item-flags">
+                ${showDiscChip ? `<label class="flag-chip disc ${item.applyDiscount?'active':''}">
+                    <input type="checkbox" ${item.applyDiscount?'checked':''} onchange="toggleDiscount(${item.id},this.checked)">
+                    <svg><use href="#i-tag"/></svg> Descuento
+                </label>` : ''}
+                ${showTipChip ? `<label class="flag-chip tip ${item.applyTip?'active':''}">
+                    <input type="checkbox" ${item.applyTip?'checked':''} onchange="toggleTip(${item.id},this.checked)">
+                    <svg><use href="#i-handshake"/></svg> Propina
+                </label>` : ''}
+            </div>` : '';
+
+        // panel de asignación por persona
+        const peopleRows = people.map(p => {
+            const v = item.qty[p] || 0;
+            return `<div class="split-person-row">
+                <span class="split-person-name">${esc(p)}</span>
+                <div class="qty-control">
+                    <button class="qty-btn" onclick="event.stopPropagation();adjustQty(${item.id},'${p}',-1)" ${v<=0?'disabled':''}>−</button>
+                    <span class="qty-val" id="qtyval-${item.id}-${p}">${v}</span>
+                    <button class="qty-btn" onclick="event.stopPropagation();adjustQty(${item.id},'${p}',1)">+</button>
+                </div>
+            </div>`;
+        }).join('');
+
+        const assignPanel = people.length > 0 ? `
+            <div class="assign-panel" onclick="event.stopPropagation()">
+                <div class="split-equal-row" onclick="toggleSplitEqual(${item.id}, this)">
+                    <input type="checkbox" id="split-eq-${item.id}" onclick="event.stopPropagation()">
+                    <span class="split-equal-label">⚡ Dividir en partes iguales</span>
+                </div>
+                <div class="split-people" id="split-people-${item.id}">
+                    ${peopleRows}
+                </div>
+            </div>` : '';
+
+        return `<div class="item-row" id="itemrow-${item.id}" onclick="toggleItem(${item.id})">
+            <div class="item-row-header">
+                <svg class="item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                <div style="flex:1;min-width:0">
+                    <div class="item-name">${esc(item.name)}</div>
+                    <div class="item-meta">
+                        <span class="item-price mono">$${fmt(item.price)}${unitInfo}</span>
+                        ${badge}
+                        <button class="btn-del" onclick="event.stopPropagation();removeItem(${item.id})" aria-label="Eliminar">
+                            <svg><use href="#i-trash"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            ${flags}
+            ${assignPanel}
+        </div>`;
+    }).join('');
+
+        document.getElementById('cnt-items') && (document.getElementById('cnt-items').textContent = items.length);
     setTimeout(renderBadges, 0); // after DOM update
 
     document.getElementById('itemsList').innerHTML = items.map(item => {
