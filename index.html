@@ -4,53 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>DiBill — divide la cuenta</title>
-
-    <!-- PWA -->
-    <meta name="application-name" content="DiBill">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="DiBill">
-    <meta name="theme-color" content="#0A0B10">
-    <meta name="mobile-web-app-capable" content="yes">
-
-    <!-- Manifest inline via blob -->
-    <script>
-    (function() {
-        const manifest = {
-            name: "DiBill — divide la cuenta",
-            short_name: "DiBill",
-            description: "Divide la cuenta del restaurante fácilmente",
-            start_url: ".",
-            display: "standalone",
-            background_color: "#0A0B10",
-            theme_color: "#0A0B10",
-            orientation: "portrait",
-            icons: [
-                {
-                    src: "data:image/png;base64,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",
-                    sizes: "256x256",
-                    type: "image/png",
-                    purpose: "any maskable"
-                }
-            ]
-        };
-        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-        const url  = URL.createObjectURL(blob);
-        const link = document.createElement('link');
-        link.rel  = 'manifest';
-        link.href = url;
-        document.currentScript.parentNode.appendChild(link);
-    })();
-    </script>
-
-    <!-- Apple touch icon inline SVG -->
-    <link rel="apple-touch-icon" href="data:image/png;base64,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">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <link rel="icon" type="image/png" href="data:image/png;base64,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">
+    <!-- Favicon: same mark as the logo -->
+    <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%23818cf8"/><stop offset="1" stop-color="%234f46e5"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(%23g)"/><rect x="9" y="8" width="4" height="4" rx="1" fill="white"/><rect x="7" y="14.5" width="18" height="3" rx="1.2" fill="white"/><rect x="19" y="20" width="4" height="4" rx="1" fill="white"/></svg>'>
 
     <style>
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -303,23 +263,18 @@
         .item-row:hover { border-color: var(--border-2); }
 
         .item-row-top {
-            display: flex; flex-direction: column;
-            gap: 5px; margin-bottom: 10px;
+            display:flex; align-items:center; gap: 12px;
+            margin-bottom: 12px;
         }
         .item-name {
             font-weight: 600; color: var(--text);
-            font-size: 0.82rem;
-            letter-spacing: -0.01em;
-            white-space: normal;
-            line-height: 1.35;
-        }
-        .item-meta {
-            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+            font-size: 0.95rem;
+            flex: 1; letter-spacing: -0.01em;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
         .item-price {
-            color: var(--primary-2); font-weight: 800;
-            font-size: 0.88rem; letter-spacing: -0.03em;
-            font-variant-numeric: tabular-nums; white-space: nowrap;
+            color: var(--text); font-weight: 700;
+            font-size: 1rem; letter-spacing: -0.02em;
         }
         .btn-del {
             width: 28px; height: 28px;
@@ -625,203 +580,6 @@
         #previewWrap tr.p-tip  td { background: #DCFCE7; color: #14532D; font-weight: 600; }
         #previewWrap tr.p-tot  td { background: #4F46E5; color: #fff; font-weight: 800; font-size: 0.95rem; }
 
-        /* ─────────────── TOGGLE ALL/MANUAL ─────────────── */
-        .scope-toggle {
-            display: inline-flex; border-radius: 999px;
-            border: 1px solid var(--border); overflow: hidden;
-            background: var(--bg-2);
-        }
-        .scope-btn {
-            padding: 4px 12px; font-size: 0.72rem; font-weight: 600;
-            border: none; cursor: pointer; font-family: 'Inter', sans-serif;
-            background: transparent; color: var(--text-muted);
-            transition: all .15s;
-        }
-        .scope-btn.active-all  { background: var(--primary); color: #fff; }
-        .scope-btn.active-manual { background: var(--surface-3); color: var(--text); }
-
-        /* ─────────────── IMPORT MODAL ─────────────── */
-        .prompt-box {
-            background: var(--bg-2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 14px;
-            font-size: 0.82rem;
-            color: var(--text-2);
-            line-height: 1.7;
-            font-family: 'JetBrains Mono', monospace;
-            margin-bottom: 12px;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
-            white-space: normal;
-        }
-        .import-textarea {
-            width: 100%;
-            min-height: 140px;
-            padding: 12px;
-            background: var(--bg-2);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 0.88rem;
-            font-family: 'JetBrains Mono', monospace;
-            resize: vertical;
-            line-height: 1.5;
-        }
-        .import-textarea:focus { outline: none; border-color: var(--primary); }
-        .import-textarea::placeholder { color: var(--text-dim); }
-
-        .import-step {
-            display: flex; gap: 12px; align-items: flex-start;
-            margin-bottom: 14px;
-        }
-        .step-num {
-            width: 24px; height: 24px; border-radius: 999px;
-            background: var(--primary-bg); color: var(--primary-2);
-            border: 1px solid rgba(99,102,241,0.3);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.72rem; font-weight: 800; flex-shrink: 0;
-        }
-        .step-text { font-size: 0.85rem; color: var(--text-2); line-height: 1.5; padding-top: 3px; }
-        .step-text b { color: var(--text); }
-
-        .import-result {
-            background: var(--green-bg);
-            border: 1px solid rgba(74,222,128,0.25);
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 0.83rem;
-            color: var(--green);
-            margin-top: 10px;
-            display: none;
-        }
-        .import-error {
-            background: var(--red-bg);
-            border: 1px solid rgba(248,113,113,0.25);
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 0.83rem;
-            color: var(--red);
-            margin-top: 10px;
-            display: none;
-        }
-
-        /* ─────────────── ASSIGN PANEL ─────────────── */
-        .item-row {
-            cursor: pointer;
-            user-select: none;
-        }
-        .item-row.expanded {
-            cursor: default;
-        }
-        .item-row-header {
-            display: flex; align-items: center; gap: 8px;
-        }
-        .item-chevron {
-            width: 16px; height: 16px; flex-shrink: 0;
-            color: var(--text-muted); transition: transform .2s;
-        }
-        .item-row.expanded .item-chevron {
-            transform: rotate(180deg);
-        }
-        .assign-panel {
-            display: none;
-            margin-top: 12px;
-            border-top: 1px solid var(--border);
-            padding-top: 12px;
-        }
-        .item-row.expanded .assign-panel {
-            display: block;
-        }
-        .split-equal-row {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 12px;
-            background: var(--surface-2);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-        .split-equal-row input[type="checkbox"] {
-            width: 18px; height: 18px;
-            accent-color: var(--primary);
-            flex-shrink: 0; cursor: pointer;
-        }
-        .split-equal-label {
-            font-size: 0.8rem; font-weight: 600; color: var(--text-2);
-            flex: 1;
-        }
-        .split-people {
-            display: flex; flex-direction: column; gap: 6px;
-        }
-        .split-person-row {
-            display: flex; align-items: center; gap: 10px;
-            padding: 8px 4px;
-            border-bottom: 1px solid var(--border-subtle, #1e1e2a);
-        }
-        .split-person-row:last-child { border-bottom: none; }
-        .split-person-check {
-            width: 16px; height: 16px;
-            accent-color: var(--primary); cursor: pointer; flex-shrink: 0;
-        }
-        .split-person-name {
-            flex: 1; font-size: 0.85rem; font-weight: 600; color: var(--text);
-        }
-        .qty-control {
-            display: flex; align-items: center; gap: 0;
-            background: var(--surface-2); border-radius: 8px;
-            overflow: hidden; border: 1px solid var(--border);
-        }
-        .qty-btn {
-            width: 36px; height: 36px;
-            background: none; border: none; cursor: pointer;
-            color: var(--text); font-size: 1.2rem; font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
-            transition: background .15s; flex-shrink: 0;
-        }
-        .qty-btn:active { background: var(--border); }
-        .qty-btn:disabled { color: var(--text-dim); cursor: default; }
-        .qty-val {
-            min-width: 32px; text-align: center;
-            font-size: 0.95rem; font-weight: 700;
-            color: var(--text); font-variant-numeric: tabular-nums;
-        }
-
-        /* ─────────────── ASSIGN BADGE ─────────────── */
-        .assign-badge {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 9px; border-radius: 999px;
-            font-size: 0.72rem; font-weight: 700;
-            font-variant-numeric: tabular-nums;
-            flex-shrink: 0;
-        }
-        .assign-badge.ok {
-            background: var(--green-bg);
-            color: var(--green);
-            border: 1px solid rgba(74,222,128,0.25);
-        }
-        .assign-badge.warn {
-            background: var(--amber-bg);
-            color: var(--amber);
-            border: 1px solid rgba(233,184,114,0.25);
-        }
-        .assign-badge.over {
-            background: var(--red-bg);
-            color: var(--red);
-            border: 1px solid rgba(248,113,113,0.25);
-        }
-        .assign-badge svg { width: 10px; height: 10px; }
-
-        #items-status {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 10px; border-radius: 999px;
-            font-size: 0.72rem; font-weight: 700;
-            transition: all .2s;
-        }
-        #items-status.neutral { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
-        #items-status.all-ok  { background: var(--green-bg);  color: var(--green);      border: 1px solid rgba(74,222,128,0.25); }
-        #items-status.has-warn{ background: var(--amber-bg);  color: var(--amber);      border: 1px solid rgba(233,184,114,0.25); }
-        #items-status svg { width: 11px; height: 11px; }
-
         /* ─────────────── RESPONSIVE ─────────────── */
         @media (max-width: 380px) {
             body { padding: 16px 12px 60px; }
@@ -829,6 +587,34 @@
             .hero-meta { gap: 16px; }
             .card { padding: 14px; }
         }
+    
+        .scope-btn{padding:3px 10px;font-size:.72rem;font-weight:600;border:1px solid var(--border);border-radius:999px;cursor:pointer;background:transparent;color:var(--text-muted);font-family:'Inter',sans-serif;transition:all .15s}
+        .scope-active{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .item-row{cursor:pointer}
+        .item-chevron{width:14px;height:14px;flex-shrink:0;color:var(--text-muted);transition:transform .2s;margin-right:4px}
+        .item-row.expanded .item-chevron{transform:rotate(180deg)}
+        .assign-panel{display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+        .item-row.expanded .assign-panel{display:block}
+        .split-eq-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface-2);border-radius:8px;margin-bottom:8px;cursor:pointer;user-select:none}
+        .split-eq-row input{width:17px;height:17px;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
+        .split-eq-label{font-size:.8rem;font-weight:600;color:var(--text-2)}
+        .split-ppl{display:flex;flex-direction:column;gap:4px}
+        .split-prow{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px solid rgba(255,255,255,.04)}
+        .split-prow:last-child{border-bottom:none}
+        .split-pname{flex:1;font-size:.85rem;font-weight:600;color:var(--text)}
+        .split-prow.in-split{background:rgba(99,102,241,0.08);border-radius:6px;padding-left:6px}
+        .split-prow .person-check{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;flex-shrink:0;display:none}
+        .split-eq-active .split-prow .person-check{display:block}
+        .qty-ctrl{display:flex;align-items:center;background:var(--surface-2);border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+        .qty-btn{width:38px;height:38px;background:none;border:none;cursor:pointer;color:var(--text);font-size:1.2rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0}
+        .qty-btn:active{background:var(--border)}
+        .qty-btn:disabled{color:var(--text-dim);cursor:default}
+        .qty-v{min-width:34px;text-align:center;font-size:.95rem;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+        .abadge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:.7rem;font-weight:700;flex-shrink:0}
+        .abadge.ok{background:var(--green-bg);color:var(--green)}
+        .abadge.warn{background:var(--amber-bg);color:var(--amber)}
+        .abadge.over{background:var(--red-bg);color:var(--red)}
+
     </style>
 </head>
 <body>
@@ -875,18 +661,6 @@
         <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
         </symbol>
-        <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-        </symbol>
-        <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </symbol>
-        <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-        </symbol>
-        <symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"/>
-        </symbol>
         <symbol id="i-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/>
         </symbol>
@@ -912,11 +686,6 @@
             </div>
         </div>
         <div class="header-actions">
-            <button class="icon-btn" id="installBtn" title="Instalar app" style="display:none" aria-label="Instalar en pantalla de inicio">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                    <path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/><path d="M20 18H4v2h16v-2z"/>
-                </svg>
-            </button>
             <button class="icon-btn" title="Información" onclick="alert('DiBill — divide la cuenta del restaurante de forma justa, ítem por ítem.')" aria-label="Información">
                 <svg><use href="#i-info"/></svg>
             </button>
@@ -969,15 +738,15 @@
             <div class="card-title"><svg><use href="#i-receipt"/></svg> Nuevo ítem</div>
         </div>
         <div class="input-row" style="margin-bottom:8px">
-            <input type="text" id="inItem" placeholder="Ej: Lomo a lo pobre" autocomplete="off" style="flex:3">
-            <input type="number" id="inPrice" placeholder="$ Precio" min="0" step="1" style="flex:2">
-            <input type="number" id="inQty" placeholder="Cant." min="1" step="1" value="1" style="flex:1; min-width:60px">
+            <input type="text" id="inItem" placeholder="Ej: Lomo a lo pobre" autocomplete="off" style="flex:2">
+            <input type="number" id="inPrice" placeholder="$ Precio" min="0" step="1" style="flex:1">
+            <input type="number" id="inQty" value="1" min="1" step="1" placeholder="×" style="flex:0 0 52px;text-align:center" title="Cantidad">
         </div>
         <button class="btn btn-primary btn-full" onclick="addItem()">
             <svg><use href="#i-plus"/></svg> Agregar ítem
         </button>
         <button class="btn btn-ghost btn-full" onclick="openImportModal()" style="margin-top:8px">
-            <svg><use href="#i-import"/></svg> Importar desde Claude / ChatGPT
+            <svg><use href="#i-receipt"/></svg> Importar desde Claude / ChatGPT
         </button>
     </div>
 
@@ -985,7 +754,7 @@
     <div class="card" id="itemsCard" style="display:none">
         <div class="card-head">
             <div class="card-title"><svg><use href="#i-list"/></svg> Detalle de la cuenta</div>
-            <div id="items-status" class="card-count">0</div>
+            <div class="card-count" id="cnt-items">0</div>
         </div>
         <div class="items-list" id="itemsList"></div>
 
@@ -997,22 +766,18 @@
             <div class="cfg-group disc">
                 <div class="cfg-label"><svg><use href="#i-tag"/></svg> Descuento</div>
                 <div class="cfg-input-wrap">
-                    <input type="number" id="inDiscount" placeholder="0" min="0" max="100" step="0.1" oninput="onDiscPctChange()">
+                    <input type="number" id="inDiscount" placeholder="0" min="0" max="100" step="0.1" oninput="onDiscChange()">
+                    <div style="display:flex;gap:4px;margin-top:6px"><button id="discAll" class="scope-btn scope-active" onclick="setDiscScope('all')">Todos</button><button id="discManual" class="scope-btn" onclick="setDiscScope('manual')">Manual</button></div>
                 </div>
-                <div class="scope-toggle">
-                    <button class="scope-btn active-all" id="discScopeAll"    onclick="setDiscScope('all')">Todos</button>
-                    <button class="scope-btn"            id="discScopeManual" onclick="setDiscScope('manual')">Manual</button>
-                </div>
+                <span class="cfg-hint">sobre ítems marcados</span>
             </div>
             <div class="cfg-group tip">
                 <div class="cfg-label"><svg><use href="#i-handshake"/></svg> Propina</div>
                 <div class="cfg-input-wrap">
-                    <input type="number" id="inTip" value="10" min="0" max="100" step="0.1" oninput="onTipPctChange()">
+                    <input type="number" id="inTip" value="10" min="0" max="100" step="0.1" oninput="onTipChange()">
+                    <div style="display:flex;gap:4px;margin-top:6px"><button id="tipAll" class="scope-btn scope-active" onclick="setTipScope('all')">Todos</button><button id="tipManual" class="scope-btn" onclick="setTipScope('manual')">Manual</button></div>
                 </div>
-                <div class="scope-toggle">
-                    <button class="scope-btn active-all" id="tipScopeAll"    onclick="setTipScope('all')">Todos</button>
-                    <button class="scope-btn"            id="tipScopeManual" onclick="setTipScope('manual')">Manual</button>
-                </div>
+                <span class="cfg-hint">sobre ítems marcados</span>
                 <button id="tipToggleBtn" class="toggle-pill" onclick="toggleTipBase()" style="display:none">
                     <span id="tipToggleLabel">sobre precio c/ descuento</span>
                 </button>
@@ -1037,51 +802,12 @@
             <button class="btn btn-ghost" onclick="openModal()">
                 <svg><use href="#i-receipt"/></svg> Ver resumen
             </button>
-            <button class="btn btn-green" onclick="copyWhatsapp()">
-                <svg><use href="#i-message"/></svg> WhatsApp
+            <button class="btn btn-green" onclick="shareImage()">
+                <svg><use href="#i-message"/></svg> Compartir imagen
             </button>
         </div>
     </div>
 
-</div>
-
-<!-- Modal importar desde IA -->
-<div id="importModal" class="modal" onclick="closeImportModalOutside(event)">
-    <div class="modal-box">
-        <div class="modal-handle"></div>
-        <div class="modal-header">
-            <div class="modal-title">
-                <svg><use href="#i-import"/></svg>
-                Importar desde Claude / ChatGPT
-            </div>
-            <button class="icon-btn" onclick="closeImportModal()" aria-label="Cerrar">
-                <svg><use href="#i-x"/></svg>
-            </button>
-        </div>
-
-        <!-- Paso 1: copiar prompt -->
-        <button class="btn btn-ghost btn-full" onclick="copyPrompt()" style="margin-bottom:16px">
-            <svg><use href="#i-clipboard"/></svg> <span id="copyPromptLabel">Copiar prompt para Claude / ChatGPT</span>
-        </button>
-
-        <!-- Paso 2: pegar respuesta -->
-        <div class="import-step">
-            <div class="step-num">1</div>
-            <div class="step-text"><b>Pega la respuesta</b> del chat aquí abajo</div>
-        </div>
-        <textarea class="import-textarea" id="importTextarea"
-            placeholder='Pega aquí la respuesta, por ejemplo:&#10;[{"nombre":"Pizza","precio":9990,"cantidad":2}]'></textarea>
-
-        <div class="import-result" id="importResult"></div>
-        <div class="import-error"  id="importError"></div>
-
-        <div class="modal-footer" style="margin-top:14px">
-            <button class="btn btn-primary" onclick="doImport()">
-                <svg><use href="#i-import"/></svg> Importar items
-            </button>
-            <button class="btn btn-ghost" onclick="closeImportModal()">Cancelar</button>
-        </div>
-    </div>
 </div>
 
 <!-- Modal bottom sheet -->
@@ -1100,1059 +826,365 @@
         <div id="previewWrap"></div>
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="downloadImage()">
-                <svg><use href="#i-clipboard"/></svg> Copiar imagen
+                <svg><use href="#i-image"/></svg> Imagen
             </button>
-            <button class="btn btn-green" onclick="copyWhatsapp()">
-                <svg><use href="#i-message"/></svg> WhatsApp
+            <button class="btn btn-green" onclick="shareImage()">
+                <svg><use href="#i-message"/></svg> Compartir imagen
             </button>
             <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
         </div>
     </div>
 </div>
 
+<div id="importModal" class="modal" onclick="if(event.target===this)closeImportModal()">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-title"><svg><use href="#i-receipt"/></svg> Importar desde Claude / ChatGPT</div>
+            <button class="icon-btn" onclick="closeImportModal()" aria-label="Cerrar"><svg><use href="#i-x"/></svg></button>
+        </div>
+        <button class="btn btn-ghost btn-full" onclick="copyImportPrompt()" style="margin-bottom:14px">
+            <svg><use href="#i-receipt"/></svg> <span id="copyPromptLbl">Copiar prompt para Claude / ChatGPT</span>
+        </button>
+        <p style="font-size:.82rem;color:var(--text-2);margin-bottom:8px">Pega aquí la respuesta del chat:</p>
+        <textarea id="importTA" style="width:100%;min-height:130px;padding:12px;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;font-size:.85rem;font-family:monospace;resize:vertical;line-height:1.5" placeholder='[{"nombre":"Pizza","precio":9990,"cantidad":2}]'></textarea>
+        <div id="importOk" style="display:none;margin-top:10px;padding:10px 14px;background:var(--green-bg);color:var(--green);border-radius:8px;font-size:.83rem"></div>
+        <div id="importErr" style="display:none;margin-top:10px;padding:10px 14px;background:var(--red-bg);color:var(--red);border-radius:8px;font-size:.83rem"></div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+            <button class="btn btn-primary" onclick="doImport()" style="flex:1">Importar</button>
+            <button class="btn btn-ghost" onclick="closeImportModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
 <script>
 let people = [];
 let items  = [];
 let tipAfterDiscount = true;
-let discScope = 'all';   // 'all' | 'manual'
-let tipScope  = 'all';   // 'all' | 'manual'
-
-function setDiscScope(scope) {
-    discScope = scope;
-    document.getElementById('discScopeAll').className    = 'scope-btn' + (scope === 'all'    ? ' active-all' : '');
-    document.getElementById('discScopeManual').className = 'scope-btn' + (scope === 'manual' ? ' active-manual' : '');
-    if (scope === 'all') {
-        items.forEach(i => i.applyDiscount = discPct() > 0);
-    }
-    // inicializar propina por defecto
-document.getElementById('inTip').dispatchEvent(new Event('input'));
-renderAll();
-}
-
-function setTipScope(scope) {
-    tipScope = scope;
-    document.getElementById('tipScopeAll').className    = 'scope-btn' + (scope === 'all'    ? ' active-all' : '');
-    document.getElementById('tipScopeManual').className = 'scope-btn' + (scope === 'manual' ? ' active-manual' : '');
-    if (scope === 'all') {
-        items.forEach(i => i.applyTip = tipPct() > 0);
-    }
-    renderAll();
-}
-
-function onDiscPctChange() {
-    if (discScope === 'all') items.forEach(i => i.applyDiscount = discPct() > 0);
-    renderAll();
-}
-
-function onTipPctChange() {
-    if (tipScope === 'all') items.forEach(i => i.applyTip = tipPct() > 0);
-    renderAll();
-}
+let discScope = 'all';
+let tipScope  = 'all';
 
 const discPct = () => parseFloat(document.getElementById('inDiscount').value) || 0;
 const tipPct  = () => parseFloat(document.getElementById('inTip').value)      || 0;
 const fmt = n  => Math.round(n).toLocaleString('es-CL');
+const fmtQty = v => {
+    if(v===0) return '0';
+    if(Number.isInteger(v)) return String(v);
+    // mostrar como fracción si es divisible limpia, si no 2 decimales
+    const r=Math.round(v*100)/100;
+    return r%1===0 ? String(r) : r.toFixed(2).replace(/\.?0+$/,'');
+};
+const esc = s  => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-/* ── cálculos ── */
-function personItemBase(item, p) { const unitPrice = item.unitPrice || item.price; return unitPrice * (item.qty[p] || 0); }
+function personItemBase(item,p){return(item.unitPrice||item.price)*(item.qty[p]||0);}
+function personTotal(p){return items.reduce((sum,item)=>{const base=personItemBase(item,p),disc=item.applyDiscount?base*discPct()/100:0,post=base-disc,tb=(item.applyTip&&item.applyDiscount&&!tipAfterDiscount)?base:post;return sum+post+(item.applyTip?tb*tipPct()/100:0);},0);}
+function personSubtotal(p){return items.reduce((s,i)=>s+personItemBase(i,p),0);}
+function personDiscount(p){return items.reduce((s,i)=>{if(!i.applyDiscount)return s;return s+personItemBase(i,p)*discPct()/100;},0);}
+function personTip(p){return items.reduce((s,i)=>{if(!i.applyTip)return s;const base=personItemBase(i,p),disc=i.applyDiscount?base*discPct()/100:0;return s+((i.applyDiscount&&!tipAfterDiscount)?base:(base-disc))*tipPct()/100;},0);}
+function grandTotal(){return items.reduce((s,i)=>{const base=i.price,disc=i.applyDiscount?base*discPct()/100:0,post=base-disc,tb=(i.applyTip&&i.applyDiscount&&!tipAfterDiscount)?base:post;return s+post+(i.applyTip?tb*tipPct()/100:0);},0);}
 
-function personTotal(p) {
-    return items.reduce((sum, item) => {
-        const base = personItemBase(item, p);
-        const disc = item.applyDiscount ? base * discPct() / 100 : 0;
-        const postDisc = base - disc;
-        const tipBase = (item.applyTip && item.applyDiscount && !tipAfterDiscount) ? base : postDisc;
-        const tip = item.applyTip ? tipBase * tipPct() / 100 : 0;
-        return sum + postDisc + tip;
-    }, 0);
+function addPerson(){const inp=document.getElementById('inPerson'),name=inp.value.trim();if(!name){inp.focus();return;}if(people.includes(name)){alert('Esa persona ya existe');return;}people.push(name);items.forEach(i=>i.qty[name]=0);inp.value='';renderAll();}
+function removePerson(name){people=people.filter(p=>p!==name);items.forEach(i=>delete i.qty[name]);renderAll();}
+
+function addItem(){
+    const iInp=document.getElementById('inItem'),pInp=document.getElementById('inPrice'),qInp=document.getElementById('inQty');
+    const name=iInp.value.trim(),price=parseFloat(pInp.value),qty=parseInt(qInp?.value)||1;
+    if(!name||isNaN(price)||price<=0){alert('Completa nombre y precio');return;}
+    const ex=items.find(i=>i.name.toLowerCase()===name.toLowerCase());
+    if(ex){ex.units+=qty;ex.unitPrice=price;ex.price=ex.unitPrice*ex.units;}
+    else{const q={};people.forEach(p=>q[p]=0);items.push({id:Date.now(),name,price:price*qty,unitPrice:price,units:qty,fractional:false,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}
+    iInp.value='';pInp.value='';if(qInp)qInp.value='1';iInp.focus();renderAll();
 }
-
-function personSubtotal(p)  { return items.reduce((s,i) => s + personItemBase(i,p), 0); }
-
-function personDiscount(p) {
-    return items.reduce((s,i) => {
-        if (!i.applyDiscount) return s;
-        return s + personItemBase(i,p) * discPct() / 100;
-    }, 0);
-}
-
-function personTip(p) {
-    return items.reduce((s,i) => {
-        if (!i.applyTip) return s;
-        const base = personItemBase(i,p);
-        const disc = i.applyDiscount ? base * discPct() / 100 : 0;
-        const tipBase = (i.applyDiscount && !tipAfterDiscount) ? base : (base - disc);
-        return s + tipBase * tipPct() / 100;
-    }, 0);
-}
-
-function grandTotal() {
-    return items.reduce((s,i) => {
-        const base = i.price;
-        const disc = i.applyDiscount ? base * discPct() / 100 : 0;
-        const postDisc = base - disc;
-        const tipBase = (i.applyTip && i.applyDiscount && !tipAfterDiscount) ? base : postDisc;
-        const tip = i.applyTip ? tipBase * tipPct() / 100 : 0;
-        return s + postDisc + tip;
-    }, 0);
-}
-
-/* ── agregar / quitar ── */
-function addPerson() {
-    const inp = document.getElementById('inPerson');
-    const name = inp.value.trim();
-    if (!name) { inp.focus(); return; }
-    if (people.includes(name)) { alert('Esa persona ya existe'); return; }
-    people.push(name);
-    items.forEach(i => { i.qty[name] = 0; if (!i.units) { i.units = 1; i.unitPrice = i.price; } });
-    inp.value = '';
-    renderAll();
-}
-
-function removePerson(name) {
-    people = people.filter(p => p !== name);
-    items.forEach(i => delete i.qty[name]);
-    renderAll();
-}
-
-function addItem() {
-    const iInp = document.getElementById('inItem');
-    const pInp = document.getElementById('inPrice');
-    const qInp = document.getElementById('inQty');
-    const name  = iInp.value.trim();
-    const price = parseFloat(pInp.value);
-    const qty   = parseInt(qInp.value) || 1;
-    if (!name || isNaN(price) || price <= 0) { alert('Completa nombre y precio'); return; }
-
-    // buscar si ya existe un item con el mismo nombre (case-insensitive)
-    const existing = items.find(i => i.name.toLowerCase() === name.toLowerCase());
-    if (existing) {
-        // mismo nombre: acumular unidades (asumimos mismo precio unitario)
-        existing.units     += qty;
-        existing.unitPrice  = price; // usar el último precio ingresado como referencia
-        existing.price      = Math.round(existing.unitPrice * existing.units);
-    } else {
-        const pQty = {};
-        people.forEach(p => pQty[p] = 0);
-        items.push({ id: Date.now(), name, price: price * qty, unitPrice: price, units: qty, qty: pQty, applyDiscount: discScope === 'all' && discPct() > 0, applyTip: tipScope === 'all' && tipPct() > 0 });
-    }
-
-    iInp.value = ''; pInp.value = ''; qInp.value = '1';
-    iInp.focus();
-    renderAll();
-}
-
-function removeItem(id) {
-    items = items.filter(i => i.id !== id);
-    renderAll();
-}
-
-function setQty(id, person, val) {
-    const item = items.find(i => i.id === id);
-    if (item) item.qty[person] = parseFloat(val) || 0;
-    renderBadges();
-    renderTotals();
-    renderStats();
-    renderPeopleChips();
-}
-
-function toggleItem(id) {
-    const el = document.getElementById('itemrow-' + id);
-    if (el) el.classList.toggle('expanded');
-}
-
-function adjustQty(id, person, delta) {
-    const item = items.find(i => i.id === id);
-    if (!item) return;
-    const newVal = Math.max(0, (item.qty[person] || 0) + delta);
-    item.qty[person] = newVal;
-
-    // actualizar display sin re-render
-    const valEl = document.getElementById(`qtyval-${id}-${person}`);
-    if (valEl) valEl.textContent = newVal;
-
-    // actualizar botón minus
-    const row = valEl?.closest('.qty-control');
-    if (row) row.querySelector('.qty-btn').disabled = newVal <= 0;
-
-    renderBadges();
-    renderTotals();
-    renderStats();
-    renderPeopleChips();
-}
-
-function toggleSplitEqual(id, isChecked) {
-    const item = items.find(i => i.id === id);
-    if (!item) return;
-
-    const container = document.getElementById('split-people-' + id);
-
-    if (isChecked) {
-        // modo dividir igual: distribuir item.units entre personas marcadas
-        // por defecto marcar todas
-        const units = item.units || 1;
-        const perPerson = Math.floor(units / people.length);
-        const remainder = units % people.length;
-        people.forEach((p, i) => {
-            item.qty[p] = perPerson + (i < remainder ? 1 : 0);
-        });
-        // actualizar UI
-        if (container) {
-            container.querySelectorAll('.qty-val').forEach((el, i) => {
-                el.textContent = item.qty[people[i]];
-            });
-            container.querySelectorAll('.qty-btn').forEach((el, i) => {
-                const p = people[Math.floor(i / 2)];
-                if (i % 2 === 0) el.disabled = item.qty[p] <= 0;
-            });
-        }
-    } else {
-        // desmarcar: resetear cantidades
-        people.forEach(p => item.qty[p] = 0);
-        if (container) {
-            container.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
-            container.querySelectorAll('.qty-btn:first-child').forEach(el => el.disabled = true);
-        }
-    }
-
-    renderBadges();
-    renderTotals();
-    renderStats();
-    renderPeopleChips();
-}
-
-function renderBadges() {
-    let allOk = true;
-    let anyProblem = false;
-
-    items.forEach(item => {
-        const el = document.getElementById('badge-' + item.id);
-        const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
-        const total    = item.units || 1;
-        const ok       = assigned === total;
-        const over     = assigned > total;
-
-        if (!ok) allOk = false;
-        if (!ok || over) anyProblem = true;
-
-        if (!el || people.length === 0) return;
-        if (ok) {
-            el.className = 'assign-badge ok';
-            el.innerHTML = '<svg><use href="#i-check"/></svg>' + assigned + '/' + total;
-        } else if (over) {
-            el.className = 'assign-badge over';
-            el.innerHTML = '<svg><use href="#i-alert"/></svg>' + assigned + '/' + total + ' · de más';
-        } else {
-            el.className = 'assign-badge warn';
-            el.innerHTML = '<svg><use href="#i-alert"/></svg>' + assigned + '/' + total + ' · faltan ' + (total - assigned);
-        }
-    });
-
-    // actualizar estado del card header
-    const statusEl = document.getElementById('items-status');
-    if (!statusEl) return;
-    if (people.length === 0 || items.length === 0) {
-        statusEl.className = 'card-count neutral';
-        statusEl.innerHTML = items.length;
-    } else if (allOk) {
-        statusEl.className = 'card-count all-ok';
-        statusEl.innerHTML = '<svg><use href="#i-check"/></svg> Todo asignado';
-    } else {
-        const pending = items.filter(item => {
-            const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
-            return assigned !== (item.units || 1);
-        }).length;
-        statusEl.className = 'card-count has-warn';
-        statusEl.innerHTML = '<svg><use href="#i-alert"/></svg> ' + pending + ' sin completar';
-    }
-}
-
-function toggleDiscount(id, val) {
-    const item = items.find(i => i.id === id);
-    if (item) { item.applyDiscount = val; renderAll(); }
-}
-
-function toggleTip(id, val) {
-    const item = items.find(i => i.id === id);
-    if (item) { item.applyTip = val; renderAll(); }
-}
-
-function toggleTipBase() {
-    tipAfterDiscount = !tipAfterDiscount;
-    const btn = document.getElementById('tipToggleBtn');
-    document.getElementById('tipToggleLabel').textContent = tipAfterDiscount
-        ? 'sobre precio c/ descuento'
-        : 'sobre precio s/ descuento';
-    btn.classList.toggle('pre', !tipAfterDiscount);
-    renderAll();
-}
-
-/* ── escape util ── */
-function esc(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    })[c]);
-}
-
-/* ── render ── */
-function renderAll() {
-    renderPeopleTags();
+function removeItem(id){items=items.filter(i=>i.id!==id);renderAll();}
+function toggleFractional(id){
+    const item=items.find(i=>i.id===id);if(!item)return;
+    item.fractional=!item.fractional;
     renderItems();
-    renderTotals();
-    renderStats();
-    renderPeopleChips();
+}
+function toggleDiscount(id,val){const i=items.find(i=>i.id===id);if(i){i.applyDiscount=val;renderAll();}}
+function toggleTip(id,val){const i=items.find(i=>i.id===id);if(i){i.applyTip=val;renderAll();}}
+
+function setDiscScope(scope){discScope=scope;document.getElementById('discAll').className='scope-btn'+(scope==='all'?' scope-active':'');document.getElementById('discManual').className='scope-btn'+(scope==='manual'?' scope-active':'');if(scope==='all')items.forEach(i=>i.applyDiscount=discPct()>0);renderAll();}
+function setTipScope(scope){tipScope=scope;document.getElementById('tipAll').className='scope-btn'+(scope==='all'?' scope-active':'');document.getElementById('tipManual').className='scope-btn'+(scope==='manual'?' scope-active':'');if(scope==='all')items.forEach(i=>i.applyTip=tipPct()>0);renderAll();}
+function onDiscChange(){if(discScope==='all')items.forEach(i=>i.applyDiscount=discPct()>0);renderAll();}
+function onTipChange(){if(tipScope==='all')items.forEach(i=>i.applyTip=tipPct()>0);renderAll();}
+function toggleTipBase(){tipAfterDiscount=!tipAfterDiscount;const btn=document.getElementById('tipToggleBtn');document.getElementById('tipToggleLabel').textContent=tipAfterDiscount?'sobre precio con descuento':'sobre precio sin descuento';btn.classList.toggle('pre',!tipAfterDiscount);renderAll();}
+
+function adjustQty(id,person,delta){
+    const item=items.find(i=>i.id===id);if(!item)return;
+    const step=item.fractional?0.5:1;
+    const v=Math.max(0,Math.round(((item.qty[person]||0)+delta*step)*100)/100);
+    item.qty[person]=v;
+    const pid=person.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
+    if(el)el.textContent=fmtQty(v);
+    const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=v<=0;
+    const cb=document.getElementById('speq-'+id);if(cb&&cb.checked)cb.checked=false;
+    renderBadges();renderTotals();renderStats();renderChips();
+}
+function splitEqual(id){
+    const item=items.find(i=>i.id===id);if(!item||!people.length)return;
+    const units=item.units||1, n=people.length;
+    const exact=units/n; // fracción exacta, sin redondear
+    people.forEach(p=>{
+        item.qty[p]=exact;
+        const pid=p.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
+        if(el)el.textContent=fmtQty(exact);
+        const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=exact<=0;
+    });
+    renderBadges();renderTotals();renderStats();renderChips();
+}
+function toggleSplitEq(id){
+    const cb=document.getElementById('speq-'+id);if(!cb)return;
+    cb.checked=!cb.checked;
+    const panel=cb.closest('.assign-panel');
+    if(panel) panel.classList.toggle('split-eq-active', cb.checked);
+    if(cb.checked){
+        // por defecto marcar a todos
+        const it=items.find(i=>i.id===id);
+        if(it) people.forEach(p=>it.qty[p]=it.qty[p]||0);
+        splitEqual(id);
+    } else {
+        const it=items.find(i=>i.id===id);
+        if(it)people.forEach(p=>{
+            it.qty[p]=0;
+            const pid=p.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
+            if(el)el.textContent='0';
+            const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=true;
+        });
+        renderBadges();renderTotals();renderStats();renderChips();
+    }
+    // re-render solo los checkboxes y clases
+    const ppl=document.getElementById('spp-'+id);
+    if(ppl){
+        ppl.querySelectorAll('.person-check').forEach((chk,i)=>{
+            const it=items.find(x=>x.id===id);
+            if(it){chk.checked=cb.checked&&(it.qty[people[i]]||0)>0;}
+        });
+        ppl.querySelectorAll('.split-prow').forEach((row,i)=>{
+            const it=items.find(x=>x.id===id);
+            row.classList.toggle('in-split', cb.checked&&it&&(it.qty[people[i]]||0)>0);
+        });
+    }
 }
 
-function renderPeopleTags() {
-    const wrap = document.getElementById('peopleTags');
-    wrap.innerHTML = people.map(p => `
-        <div class="p-tag">${esc(p)}
-            <button class="p-tag-x" onclick="removePerson('${esc(p).replace(/'/g,"\\'")}')" aria-label="Quitar ${esc(p)}">
-                <svg><use href="#i-x"/></svg>
-            </button>
-        </div>`).join('');
-    document.getElementById('cnt-people').textContent = people.length;
+function togglePersonInSplit(id, person, checked){
+    const item=items.find(i=>i.id===id);if(!item)return;
+    if(!checked){
+        // desmarcar persona: poner en 0
+        item.qty[person]=0;
+        const pid=person.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
+        if(el)el.textContent='0';
+        const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=true;
+    }
+    // recalcular split entre los que siguen marcados
+    redistributeSplit(id);
 }
 
-function renderItems() {
-    const d = discPct(), t = tipPct();
-    const hasDisc = d > 0, hasTip = t > 0;
-
-    const toggleBtn = document.getElementById('tipToggleBtn');
-    toggleBtn.style.display = (hasDisc && hasTip) ? 'inline-flex' : 'none';
-
-    const card = document.getElementById('itemsCard');
-    if (items.length === 0) { card.style.display = 'none'; return; }
-    card.style.display = 'block';
-    document.getElementById('cnt-items') && (document.getElementById('cnt-items').textContent = items.length);
-    setTimeout(renderBadges, 0); // after DOM update
-
-    document.getElementById('itemsList').innerHTML = items.map(item => {
-        const unitInfo = (item.units > 1)
-            ? `<span style="font-size:0.65rem;color:var(--text-muted);margin-left:4px;white-space:nowrap">${item.units}× $${fmt(item.unitPrice)}c/u</span>`
-            : '';
-
-        const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
-        const total    = item.units || 1;
-        let badge = '';
-        if (people.length > 0) {
-            if (assigned === total) {
-                badge = `<span id="badge-${item.id}" class="assign-badge ok"><svg><use href="#i-check"/></svg>${assigned}/${total}</span>`;
-            } else if (assigned > total) {
-                badge = `<span id="badge-${item.id}" class="assign-badge over"><svg><use href="#i-alert"/></svg>${assigned}/${total} · de más</span>`;
-            } else {
-                badge = `<span id="badge-${item.id}" class="assign-badge warn"><svg><use href="#i-alert"/></svg>${assigned}/${total} · faltan ${total - assigned}</span>`;
-            }
+function redistributeSplit(id){
+    const item=items.find(i=>i.id===id);if(!item)return;
+    const cb=document.getElementById('speq-'+id);
+    if(!cb||!cb.checked)return;
+    // personas actualmente marcadas (con checkbox checked)
+    const ppl=document.getElementById('spp-'+id);
+    if(!ppl)return;
+    const checks=[...ppl.querySelectorAll('.person-check')];
+    const active=people.filter((_,i)=>checks[i]?.checked);
+    if(!active.length)return;
+    const units=item.units||1;
+    const n=active.length, exact=units/n;
+    people.forEach(p=>{
+        const isActive=active.includes(p);
+        const val=isActive?exact:0;
+        item.qty[p]=val;
+        const pid=p.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
+        if(el)el.textContent=isActive?fmtQty(exact):'0';
+        const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=val<=0;
+        // sync check visual
+        if(checks[people.indexOf(p)]){
+            checks[people.indexOf(p)].checked=isActive;
+            el?.closest('.split-prow')?.classList.toggle('in-split',isActive);
         }
+    });
+    renderBadges();renderTotals();renderStats();renderChips();
+}
 
-        const showDiscChip = hasDisc && discScope === 'manual';
-        const showTipChip  = hasTip  && tipScope  === 'manual';
-        const flags = (showDiscChip || showTipChip) ? `
-            <div class="item-flags">
-                ${showDiscChip ? `<label class="flag-chip disc ${item.applyDiscount?'active':''}">
-                    <input type="checkbox" ${item.applyDiscount?'checked':''} data-action="disc" data-id="${item.id}">
-                    <svg><use href="#i-tag"/></svg> Descuento
-                </label>` : ''}
-                ${showTipChip ? `<label class="flag-chip tip ${item.applyTip?'active':''}">
-                    <input type="checkbox" ${item.applyTip?'checked':''} data-action="tip" data-id="${item.id}">
-                    <svg><use href="#i-handshake"/></svg> Propina
-                </label>` : ''}
-            </div>` : '';
+function renderAll(){renderPeopleTags();renderStats();renderItems();renderTotals();renderChips();}
 
-        const peopleRows = people.map(p => {
-            const v = item.qty[p] || 0;
-            return `<div class="split-person-row">
-                <span class="split-person-name">${esc(p)}</span>
-                <div class="qty-control">
-                    <button class="qty-btn" data-action="minus" data-id="${item.id}" data-person="${p}" ${v<=0?'disabled':''}>−</button>
-                    <span class="qty-val" id="qtyval-${item.id}-${p.replace(/\s/g,'_')}">${v}</span>
-                    <button class="qty-btn" data-action="plus" data-id="${item.id}" data-person="${p}">+</button>
+function renderPeopleTags(){
+    const el=document.getElementById('peopleTags');if(!el)return;
+    document.getElementById('cnt-people').textContent=people.length;
+    el.innerHTML=people.map(p=>`<div class="person-tag">${esc(p)}<button class="p-tag-x" onclick="removePerson('${esc(p).replace(/'/g,"\\'")}')" aria-label="Quitar"><svg><use href="#i-x"/></svg></button></div>`).join('');
+}
+function renderStats(){
+    const gt=grandTotal();
+    document.getElementById('stat-total').textContent='$'+fmt(gt);
+    document.getElementById('stat-items').textContent=items.length;
+    document.getElementById('stat-people').textContent=people.length;
+    document.getElementById('stat-perperson').textContent='$'+fmt(people.length>0?gt/people.length:0);
+}
+function renderItems(){
+    const list=document.getElementById('itemsList');if(!list)return;
+    const d=discPct(),t=tipPct(),hasDisc=d>0,hasTip=t>0;
+    const tipBtn=document.getElementById('tipToggleBtn');
+    if(tipBtn)tipBtn.style.display=(hasDisc&&hasTip)?'inline-flex':'none';
+    const card=document.getElementById('itemsCard');if(card)card.style.display=items.length?'block':'none';
+    const expanded=new Set([...document.querySelectorAll('.item-row.expanded')].map(el=>parseInt(el.dataset.id)));
+    list.innerHTML=items.map(item=>{
+        const unitInfo=item.units>1?`<span style="font-size:.65rem;color:var(--text-muted);margin-left:3px">${item.units}x $${fmt(item.unitPrice)}c/u</span>`:'';
+        const assigned=Math.round(people.reduce((s,p)=>s+(item.qty[p]||0),0)*1000)/1000,total=item.units||1;
+        let badge='';
+        if(people.length>0){
+            if(Math.abs(assigned-total)<0.001)badge=`<span id="badge-${item.id}" class="abadge ok">&#10003; ${assigned}/${total}</span>`;
+            else if(assigned>total+0.001)badge=`<span id="badge-${item.id}" class="abadge over">! ${assigned}/${total}</span>`;
+            else badge=`<span id="badge-${item.id}" class="abadge warn">! ${assigned}/${total}</span>`;
+        }
+        const showDisc=hasDisc&&discScope==='manual',showTip=hasTip&&tipScope==='manual';
+        const flags=(showDisc||showTip)?`<div class="item-flags">${showDisc?`<label class="flag-chip disc ${item.applyDiscount?'active':''}"><input type="checkbox" ${item.applyDiscount?'checked':''} onchange="toggleDiscount(${item.id},this.checked)"><svg><use href="#i-tag"/></svg> Desc.</label>`:''} ${showTip?`<label class="flag-chip tip ${item.applyTip?'active':''}"><input type="checkbox" ${item.applyTip?'checked':''} onchange="toggleTip(${item.id},this.checked)"><svg><use href="#i-handshake"/></svg> Prop.</label>`:''}</div>`:'';
+        const splitOn = document.getElementById('speq-'+item.id)?.checked || false;
+        const pRows=people.map(p=>{
+            const v=item.qty[p]||0, pid=p.replace(/[^a-zA-Z0-9]/g,'_');
+            const inSplit = splitOn && v > 0;
+            return `<div class="split-prow${inSplit?' in-split':''}" id="spr-${item.id}-${pid}">
+                <input type="checkbox" class="person-check" id="pchk-${item.id}-${pid}"
+                    ${inSplit?'checked':''}
+                    onchange="togglePersonInSplit(${item.id},'${p.replace(/'/g,"\'")}',this.checked)"
+                    onclick="event.stopPropagation()">
+                <span class="split-pname">${esc(p)}</span>
+                <div class="qty-ctrl">
+                    <button class="qty-btn" onclick="adjustQty(${item.id},'${p.replace(/'/g,"\'")}', -1)" ${v<=0?'disabled':''}>&#8722;</button>
+                    <span class="qty-v" id="qv-${item.id}-${pid}">${fmtQty(v)}</span>
+                    <button class="qty-btn" onclick="adjustQty(${item.id},'${p.replace(/'/g,"\'")}', 1)">+</button>
                 </div>
             </div>`;
         }).join('');
-
-        const assignPanel = people.length > 0 ? `
-            <div class="assign-panel">
-                <div class="split-equal-row" data-action="split-equal" data-id="${item.id}">
-                    <input type="checkbox" id="split-eq-${item.id}">
-                    <span class="split-equal-label">⚡ Dividir en partes iguales</span>
-                </div>
-                <div class="split-people" id="split-people-${item.id}">
-                    ${peopleRows}
-                </div>
-            </div>` : '';
-
-        return `<div class="item-row" id="itemrow-${item.id}" data-action="toggle" data-id="${item.id}">
-            <div class="item-row-header">
-                <svg class="item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                <div style="flex:1;min-width:0">
-                    <div class="item-name">${esc(item.name)}</div>
-                    <div class="item-meta">
-                        <span class="item-price mono">$${fmt(item.price)}${unitInfo}</span>
-                        ${badge}
-                        <button class="btn-del" data-action="delete" data-id="${item.id}" aria-label="Eliminar">
-                            <svg><use href="#i-trash"/></svg>
-                        </button>
-                    </div>
-                </div>
+        const panel=people.length?`<div class="assign-panel${splitOn?' split-eq-active':''}" onclick="event.stopPropagation()">
+            <div class="split-eq-row" onclick="event.stopPropagation();toggleSplitEq(${item.id})">
+                <input type="checkbox" id="speq-${item.id}" ${splitOn?'checked':''} onclick="event.stopPropagation()">
+                <span class="split-eq-label">⚡ Dividir en partes iguales</span>
             </div>
-            ${flags}
-            ${assignPanel}
-        </div>`;
+            <div class="split-ppl" id="spp-${item.id}">${pRows}</div>
+        </div>`:'';
+        const isExp=expanded.has(item.id);
+        return `<div class="item-row${isExp?' expanded':''}" data-id="${item.id}" onclick="if(!event.target.closest('.assign-panel,.btn-del,input,label'))this.classList.toggle('expanded')"><div style="display:flex;align-items:center;gap:6px"><svg class="item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg><div style="flex:1;min-width:0"><div style="font-weight:600;color:var(--text);font-size:.82rem;line-height:1.3;white-space:normal">${esc(item.name)}</div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:3px"><span style="color:var(--primary-2);font-weight:800;font-size:.88rem;font-variant-numeric:tabular-nums">$${fmt(item.price)}${unitInfo}</span>${badge}<button class="btn-del" onclick="event.stopPropagation();removeItem(${item.id})" aria-label="Eliminar"><svg><use href="#i-trash"/></svg></button></div></div></div>${flags}${panel}</div>`;
     }).join('');
-
-        document.getElementById('cnt-items') && (document.getElementById('cnt-items').textContent = items.length);
-    setTimeout(renderBadges, 0); // after DOM update
-
-    document.getElementById('itemsList').innerHTML = items.map(item => {
-        const unitInfo = (item.units > 1)
-            ? `<span style="font-size:0.65rem;color:var(--text-muted);margin-left:4px;white-space:nowrap">${item.units}× $${fmt(item.unitPrice)}c/u</span>`
-            : '';
-
-        const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
-        const total    = item.units || 1;
-        let badge = '';
-        if (people.length > 0) {
-            if (assigned === total) {
-                badge = `<span id="badge-${item.id}" class="assign-badge ok"><svg><use href="#i-check"/></svg>${assigned}/${total}</span>`;
-            } else if (assigned > total) {
-                badge = `<span id="badge-${item.id}" class="assign-badge over"><svg><use href="#i-alert"/></svg>${assigned}/${total} · de más</span>`;
-            } else {
-                badge = `<span id="badge-${item.id}" class="assign-badge warn"><svg><use href="#i-alert"/></svg>${assigned}/${total} · faltan ${total - assigned}</span>`;
-            }
-        }
-
-        const showDiscChip = hasDisc && discScope === 'manual';
-        const showTipChip  = hasTip  && tipScope  === 'manual';
-        const flags = (showDiscChip || showTipChip) ? `
-            <div class="item-flags">
-                ${showDiscChip ? `<label class="flag-chip disc ${item.applyDiscount?'active':''}">
-                    <input type="checkbox" ${item.applyDiscount?'checked':''} onchange="toggleDiscount(${item.id},this.checked)">
-                    <svg><use href="#i-tag"/></svg> Descuento
-                </label>` : ''}
-                ${showTipChip ? `<label class="flag-chip tip ${item.applyTip?'active':''}">
-                    <input type="checkbox" ${item.applyTip?'checked':''} onchange="toggleTip(${item.id},this.checked)">
-                    <svg><use href="#i-handshake"/></svg> Propina
-                </label>` : ''}
-            </div>` : '';
-
-        // panel de asignación por persona
-        const peopleRows = people.map(p => {
-            const v = item.qty[p] || 0;
-            return `<div class="split-person-row">
-                <span class="split-person-name">${esc(p)}</span>
-                <div class="qty-control">
-                    <button class="qty-btn" onclick="event.stopPropagation();adjustQty(${item.id},'${p}',-1)" ${v<=0?'disabled':''}>−</button>
-                    <span class="qty-val" id="qtyval-${item.id}-${p}">${v}</span>
-                    <button class="qty-btn" onclick="event.stopPropagation();adjustQty(${item.id},'${p}',1)">+</button>
-                </div>
-            </div>`;
-        }).join('');
-
-        const assignPanel = people.length > 0 ? `
-            <div class="assign-panel" onclick="event.stopPropagation()">
-                <div class="split-equal-row" onclick="toggleSplitEqual(${item.id}, this)">
-                    <input type="checkbox" id="split-eq-${item.id}" onclick="event.stopPropagation()">
-                    <span class="split-equal-label">⚡ Dividir en partes iguales</span>
-                </div>
-                <div class="split-people" id="split-people-${item.id}">
-                    ${peopleRows}
-                </div>
-            </div>` : '';
-
-        return `<div class="item-row" id="itemrow-${item.id}" onclick="toggleItem(${item.id})">
-            <div class="item-row-header">
-                <svg class="item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                <div style="flex:1;min-width:0">
-                    <div class="item-name">${esc(item.name)}</div>
-                    <div class="item-meta">
-                        <span class="item-price mono">$${fmt(item.price)}${unitInfo}</span>
-                        ${badge}
-                        <button class="btn-del" onclick="event.stopPropagation();removeItem(${item.id})" aria-label="Eliminar">
-                            <svg><use href="#i-trash"/></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            ${flags}
-            ${assignPanel}
-        </div>`;
-    }).join('');
-
-        document.getElementById('cnt-items') && (document.getElementById('cnt-items').textContent = items.length);
-    setTimeout(renderBadges, 0); // after DOM update
-
-    document.getElementById('itemsList').innerHTML = items.map(item => {
-        const peopleQty = people.map(p => `
-            <div class="person-qty">
-                <label>${esc(p)}</label>
-                <input type="number" min="0" step="1"
-                    value="${item.qty[p] > 0 ? item.qty[p] : ''}"
-                    placeholder="0"
-                    oninput="setQty(${item.id},'${esc(p).replace(/'/g,"\\'")}',this.value)">
-            </div>
-        `).join('');
-
-        const showDiscChip = hasDisc && discScope === 'manual';
-        const showTipChip  = hasTip  && tipScope  === 'manual';
-        const flags = (showDiscChip || showTipChip) ? `
-            <div class="item-flags">
-                ${showDiscChip ? `<label class="flag-chip disc ${item.applyDiscount?'active':''}">
-                    <input type="checkbox" ${item.applyDiscount?'checked':''} onchange="toggleDiscount(${item.id},this.checked)">
-                    <svg><use href="#i-tag"/></svg> Descuento
-                </label>` : ''}
-                ${showTipChip ? `<label class="flag-chip tip ${item.applyTip?'active':''}">
-                    <input type="checkbox" ${item.applyTip?'checked':''} onchange="toggleTip(${item.id},this.checked)">
-                    <svg><use href="#i-handshake"/></svg> Propina
-                </label>` : ''}
-            </div>` : '';
-
-        const noPeople = people.length === 0
-            ? '<div class="item-empty">Agrega personas para asignar cantidades ↑</div>'
-            : `<div class="item-people">${peopleQty}</div>`;
-
-        const unitInfo = (item.units > 1)
-            ? `<span style="font-size:0.68rem;color:var(--text-muted);margin-left:4px;white-space:nowrap">${item.units}× $${fmt(item.unitPrice)}c/u</span>`
-            : '';
-
-        // badge de asignación
-        const assigned = people.reduce((s,p) => s + (item.qty[p] || 0), 0);
-        const total    = item.units || 1;
-        let badge = '';
-        if (people.length > 0) {
-            if (assigned === total) {
-                badge = `<span id="badge-${item.id}" class="assign-badge ok"><svg><use href="#i-check"/></svg>${assigned}/${total}</span>`;
-            } else if (assigned > total) {
-                badge = `<span id="badge-${item.id}" class="assign-badge over"><svg><use href="#i-alert"/></svg>${assigned}/${total} · de más</span>`;
-            } else {
-                const missing = total - assigned;
-                badge = `<span id="badge-${item.id}" class="assign-badge warn"><svg><use href="#i-alert"/></svg>${assigned}/${total} · faltan ${missing}</span>`;
-            }
-        }
-
-        return `<div class="item-row">
-            <div class="item-row-top">
-                <span class="item-name">${esc(item.name)}</span>
-                <div class="item-meta">
-                    <span class="item-price mono">$${fmt(item.price)}${unitInfo}</span>
-                    ${badge}
-                    <button class="btn-del" onclick="removeItem(${item.id})" aria-label="Eliminar">
-                        <svg><use href="#i-trash"/></svg>
-                    </button>
-                </div>
-            </div>
-            ${flags}
-            ${noPeople}
-        </div>`;
-    }).join('');
+    updateStatusBadge();
+}
+function renderBadges(){
+    items.forEach(item=>{const el=document.getElementById('badge-'+item.id);if(!el)return;const a=Math.round(people.reduce((s,p)=>s+(item.qty[p]||0),0)*1000)/1000,t=item.units||1;if(Math.abs(a-t)<0.001){el.className='abadge ok';el.textContent='✓ '+a+'/'+t;}else if(a>t){el.className='abadge over';el.textContent='! '+a+'/'+t;}else{el.className='abadge warn';el.textContent='! '+a+'/'+t;}});
+    updateStatusBadge();
+}
+function updateStatusBadge(){
+    const el=document.getElementById('cnt-items');if(!el)return;
+    if(!people.length||!items.length){el.className='card-count';el.textContent=items.length;return;}
+    const pending=items.filter(item=>{const a=Math.round(people.reduce((s,p)=>s+(item.qty[p]||0),0)*1000)/1000,t=item.units||1;return Math.abs(a-t)>0.001;}).length;
+    if(pending===0){el.className='card-count abadge ok';el.textContent='✓ Todo asignado';}
+    else{el.className='card-count abadge warn';el.textContent='! '+pending+' sin completar';}
+}
+function renderTotals(){
+    const block=document.getElementById('totalsBlock');if(!block||!items.length){if(block)block.innerHTML='';return;}
+    const d=discPct(),t=tipPct(),discItems=items.filter(i=>i.applyDiscount),tipItems=items.filter(i=>i.applyTip);
+    const grandSub=items.reduce((s,i)=>s+i.price,0),grandDisc=discItems.reduce((s,i)=>s+i.price*d/100,0);
+    const grandTip=tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0);
+    const gTotal=grandSub-grandDisc+grandTip;
+    const sm=s=>'<div style="margin-top:3px">'+s+'</div>';
+    const pSub=people.length?sm(people.map(p=>`<span style="font-size:.72rem;color:var(--text-muted)">${esc(p)}: $${fmt(personSubtotal(p))}</span>`).join(' · ')):'' ;
+    let html=`<div class="totals-block"><div class="total-line subtotal"><div>Subtotal${pSub}</div><div class="tl-val">$${fmt(grandSub)}</div></div>`;
+    if(d>0&&discItems.length>0){const gd=discItems.reduce((s,i)=>s+i.price*d/100,0),dp=people.length?sm(people.map(p=>{const v=personDiscount(p);return v>0?`<span style="font-size:.72rem;color:var(--amber)">${esc(p)}: -$${fmt(v)}</span>`:''}).filter(Boolean).join(' · ')):'' ;html+=`<div class="total-line disc-line"><div>Desc. ${d}% — ${discItems.map(i=>esc(i.name)).join(', ')}${dp}</div><div class="tl-val">-$${fmt(gd)}</div></div>`;}
+    if(t>0&&tipItems.length>0){const gt=tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0),tp=people.length?sm(people.map(p=>{const v=personTip(p);return v>0?`<span style="font-size:.72rem;color:var(--green)">${esc(p)}: +$${fmt(v)}</span>`:''}).filter(Boolean).join(' · ')):'' ;html+=`<div class="total-line tip-line"><div>Prop. ${t}% — ${tipItems.map(i=>esc(i.name)).join(', ')}${tp}</div><div class="tl-val">+$${fmt(gt)}</div></div>`;}
+    const totP=people.length?sm(people.map(p=>`<span style="font-size:.72rem;color:rgba(255,255,255,.65)">${esc(p)}: $${fmt(personTotal(p))}</span>`).join(' · ')):'' ;
+    html+=`<div class="total-line grand"><div>Total${totP}</div><div class="tl-val">$${fmt(gTotal)}</div></div></div>`;
+    block.innerHTML=html;
+}
+function renderChips(){
+    const card=document.getElementById('peopleCard'),grid=document.getElementById('personChips');
+    if(!card||!grid)return;if(!people.length||!items.length){card.style.display='none';return;}
+    card.style.display='block';
+    grid.innerHTML=people.map(p=>`<div class="p-chip"><div class="pn">${esc(p)}</div><div class="pa">$${fmt(personTotal(p))}</div><div class="pl">a pagar</div></div>`).join('');
 }
 
-function renderTotals() {
-    if (items.length === 0) return;
-    const d = discPct(), t = tipPct();
-    const discItems = items.filter(i => i.applyDiscount);
-    const tipItems  = items.filter(i => i.applyTip);
+function openModal(){if(!people.length||!items.length){alert('Agrega personas e ítems primero');return;}document.getElementById('previewWrap').innerHTML=buildPreview();document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function closeModalOutside(e){if(e.target===document.getElementById('modal'))closeModal();}
 
-    const grandSub  = items.reduce((s,i) => s+i.price, 0);
-    const grandDisc = discItems.reduce((s,i) => s + i.price*d/100, 0);
-    const grandTip  = tipItems.reduce((s,i) => {
-        const b=i.price, d2=i.applyDiscount?b*d/100:0;
-        const tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);
-        return s+tb*t/100;
-    }, 0);
-    const gTotal = grandSub - grandDisc + grandTip;
-
-    const subPeople = people.length ? `<div class="tl-people">${people.map(p=>
-        `<span class="tl-person">${esc(p)} <b class="mono">$${fmt(personSubtotal(p))}</b></span>`
-    ).join('')}</div>` : '';
-
-    const discPeople = people.length && discItems.length ? `<div class="tl-people">${people.map(p=>{
-        const pd=personDiscount(p); return pd>0?`<span class="tl-person">${esc(p)} <b class="mono">-$${fmt(pd)}</b></span>`:''
-    }).join('')}</div>` : '';
-
-    const tipPeople = people.length && tipItems.length ? `<div class="tl-people">${people.map(p=>{
-        const pt=personTip(p); return pt>0?`<span class="tl-person">${esc(p)} <b class="mono">+$${fmt(pt)}</b></span>`:''
-    }).join('')}</div>` : '';
-
-    const totalPeople = people.length ? `<div class="tl-people">${people.map(p=>
-        `<span class="tl-person">${esc(p)} <b class="mono">$${fmt(personTotal(p))}</b></span>`
-    ).join('')}</div>` : '';
-
-    let html = `<div class="totals-block">
-        <div class="total-line subtotal">
-            <div class="tl-label"><div class="tl-head">Subtotal</div>${subPeople}</div>
-            <div class="tl-val mono">$${fmt(grandSub)}</div>
-        </div>`;
-
-    if (d > 0 && discItems.length > 0) {
-        html += `<div class="total-line disc-line">
-            <div class="tl-label"><div class="tl-head"><svg style="width:12px;height:12px"><use href="#i-tag"/></svg> Descuento ${d}%</div>${discPeople}</div>
-            <div class="tl-val mono">-$${fmt(grandDisc)}</div>
-        </div>`;
-    }
-
-    if (t > 0 && tipItems.length > 0) {
-        html += `<div class="total-line tip-line">
-            <div class="tl-label"><div class="tl-head"><svg style="width:12px;height:12px"><use href="#i-handshake"/></svg> Propina ${t}%</div>${tipPeople}</div>
-            <div class="tl-val mono">+$${fmt(grandTip)}</div>
-        </div>`;
-    }
-
-    html += `<div class="total-line grand">
-        <div class="tl-label"><div class="tl-head">Total a pagar</div>${totalPeople}</div>
-        <div class="tl-val mono">$${fmt(gTotal)}</div>
-    </div></div>`;
-
-    document.getElementById('totalsBlock').innerHTML = html;
+function buildPreview(){
+    const d=discPct(),t=tipPct(),discItems=items.filter(i=>i.applyDiscount),tipItems=items.filter(i=>i.applyTip);
+    const s='style="padding:9px 12px;border:1px solid #e5e7eb';
+    let h=`<table style="width:100%;border-collapse:collapse;font-size:.88rem;color:#222"><thead><tr><th ${s};background:#f3f4f6;font-weight:700;text-align:left">Item</th><th ${s};background:#f3f4f6;font-weight:700;text-align:right">Precio</th>`;
+    people.forEach(p=>h+=`<th ${s};background:#f3f4f6;font-weight:700;text-align:right">${esc(p)}</th>`);
+    h+='</tr></thead><tbody>';
+    items.forEach(item=>{h+=`<tr><td ${s}">${esc(item.name)}</td><td ${s};text-align:right">$${fmt(item.price)}</td>`;people.forEach(p=>{const v=item.qty[p]||0;h+=`<td ${s};text-align:right">${v>0?v:''}</td>`;});h+='</tr>';});
+    const gs=items.reduce((s,i)=>s+i.price,0);
+    h+=`<tr style="background:#eff6ff"><td ${s};font-weight:700">Subtotal</td><td ${s};text-align:right;font-weight:700">$${fmt(gs)}</td>`;
+    people.forEach(p=>h+=`<td ${s};text-align:right;font-weight:700">$${fmt(personSubtotal(p))}</td>`);h+='</tr>';
+    if(d>0&&discItems.length>0){const gd=discItems.reduce((s,i)=>s+i.price*d/100,0);h+=`<tr style="background:#fffbeb"><td ${s};color:#92400e;font-weight:600">Descuento (${d}%)</td><td ${s};text-align:right;color:#92400e">-$${fmt(gd)}</td>`;people.forEach(p=>{const v=personDiscount(p);h+=`<td ${s};text-align:right;color:#92400e">${v>0?'-$'+fmt(v):''}</td>`;});h+='</tr>';}
+    if(t>0&&tipItems.length>0){const gt=tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0);h+=`<tr style="background:#f0fdf4"><td ${s};color:#14532d;font-weight:600">Propina (${t}%)</td><td ${s};text-align:right;color:#14532d">+$${fmt(gt)}</td>`;people.forEach(p=>{const v=personTip(p);h+=`<td ${s};text-align:right;color:#14532d">${v>0?'+$'+fmt(v):''}</td>`;});h+='</tr>';}
+    h+=`<tr style="background:#4f46e5"><td ${s};color:#fff;font-weight:800">TOTAL</td><td ${s};text-align:right;color:#fff;font-weight:800">$${fmt(grandTotal())}</td>`;
+    people.forEach(p=>h+=`<td ${s};text-align:right;color:#fff;font-weight:800">$${fmt(personTotal(p))}</td>`);
+    return h+'</tr></tbody></table>';
 }
 
-function renderStats() {
-    const gt = grandTotal();
-    document.getElementById('stat-total').textContent  = fmt(gt);
-    document.getElementById('stat-items').textContent  = items.length;
-    document.getElementById('stat-people').textContent = people.length;
-    const avg = people.length > 0 ? gt / people.length : 0;
-    document.getElementById('stat-perperson').textContent = '$' + fmt(avg);
-}
-
-function renderPeopleChips() {
-    const card = document.getElementById('peopleCard');
-    if (people.length === 0 || items.length === 0) { card.style.display='none'; return; }
-    card.style.display = 'block';
-    document.getElementById('personChips').innerHTML = people.map(p => `
-        <div class="p-chip">
-            <div class="pn">${esc(p)}</div>
-            <div class="pa mono">$${fmt(personTotal(p))}</div>
-            <div class="pl">a pagar</div>
-        </div>`).join('');
-}
-
-/* ── modal ── */
-function buildPreview() {
-    const d = discPct(), t = tipPct();
-    const discItems = items.filter(i=>i.applyDiscount);
-    const tipItems  = items.filter(i=>i.applyTip);
-
-    let html = '<table><thead><tr><th>Item</th><th>Precio</th>';
-    people.forEach(p => html += `<th>${esc(p)}</th>`);
-    html += '</tr></thead><tbody>';
-
-    items.forEach(item => {
-        html += `<tr><td>${esc(item.name)}</td><td>$${fmt(item.price)}</td>`;
-        people.forEach(p => { const v=item.qty[p]||0; html+=`<td>${v>0?v:''}</td>`; });
-        html += '</tr>';
-    });
-
-    const grandSub = items.reduce((s,i)=>s+i.price,0);
-    html += `<tr class="p-sub"><td>Subtotal</td><td>$${fmt(grandSub)}</td>`;
-    people.forEach(p => html+=`<td>$${fmt(personSubtotal(p))}</td>`);
-    html += '</tr>';
-
-    if (d>0 && discItems.length>0) {
-        const gd = discItems.reduce((s,i)=>s+i.price*d/100,0);
-        html += `<tr class="p-disc"><td>Descuento (${d}%)</td><td>-$${fmt(gd)}</td>`;
-        people.forEach(p=>{const pd=personDiscount(p);html+=`<td>${pd>0?'-$'+fmt(pd):''}</td>`;});
-        html += '</tr>';
-    }
-
-    if (t>0 && tipItems.length>0) {
-        const gt = tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0);
-        html += `<tr class="p-tip"><td>Propina (${t}%)</td><td>+$${fmt(gt)}</td>`;
-        people.forEach(p=>{const pt=personTip(p);html+=`<td>${pt>0?'+$'+fmt(pt):''}</td>`;});
-        html += '</tr>';
-    }
-
-    html += `<tr class="p-tot"><td>TOTAL</td><td>$${fmt(grandTotal())}</td>`;
-    people.forEach(p=>html+=`<td>$${fmt(personTotal(p))}</td>`);
-    html += '</tr></tbody></table>';
-    return html;
-}
-
-function openModal() {
-    if (!people.length || !items.length) { alert('Agrega personas e ítems primero'); return; }
-    document.getElementById('previewWrap').innerHTML = buildPreview();
-    document.getElementById('modal').classList.add('open');
-}
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-function closeModalOutside(e) { if (e.target===document.getElementById('modal')) closeModal(); }
-
-function buildCanvas() {
-    const d = discPct(), t = tipPct();
-    const discItems = items.filter(i => i.applyDiscount);
-    const tipItems  = items.filter(i => i.applyTip);
-
-    const scale  = 2;
-    const padX   = 32;
-    const padY   = 28;
-    const rowH   = 36;
-    const headH  = 44;
-    const fontSize = 12;
-    const headerFontSize = 10;
-
-    const nameColW   = 180;
-    const priceColW  = 90;
-    const personColW = 90;
-    const W = padX * 2 + nameColW + priceColW + people.length * personColW;
-
-    const extraRows = 1
-        + (d > 0 && discItems.length > 0 ? 1 : 0)
-        + (t > 0 && tipItems.length > 0  ? 1 : 0)
-        + 1;
-    const H = padY + 48 + headH + (items.length + extraRows) * rowH + padY;
-
-    const canvas  = document.createElement('canvas');
-    canvas.width  = W * scale;
-    canvas.height = H * scale;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(scale, scale);
-
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, W, H);
-
-    function txt(str, x, y, { size=fontSize, weight='500', color='#111827', align='left', maxW=9999 } = {}) {
-        ctx.font = `${weight} ${size}px Inter, system-ui, sans-serif`;
-        ctx.fillStyle = color;
-        ctx.textAlign = align;
-        ctx.textBaseline = 'middle';
-        let s = String(str ?? '');
-        while (s.length > 1 && ctx.measureText(s).width > maxW) s = s.slice(0, -1);
-        if (s !== String(str ?? '')) s = s.slice(0, -1) + '…';
-        ctx.fillText(s, x, y);
-    }
-
-    function hline(y, color='#E5E7EB') {
-        ctx.strokeStyle = color; ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.moveTo(padX, y); ctx.lineTo(W - padX, y); ctx.stroke();
-    }
-
-    function fillRect(x, y, w, h, color, radius=0) {
-        ctx.fillStyle = color;
-        if (radius > 0) { ctx.beginPath(); ctx.roundRect(x, y, w, h, radius); ctx.fill(); }
-        else ctx.fillRect(x, y, w, h);
-    }
-
-    const col = {
-        name:   padX,
-        price:  padX + nameColW,
-        people: i => padX + nameColW + priceColW + i * personColW,
-    };
-
-    let y = padY;
-    ctx.font = '800 20px Inter, system-ui, sans-serif';
-    ctx.fillStyle = '#111'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText('Di', col.name, y + 14);
-    const diW = ctx.measureText('Di').width;
-    ctx.fillStyle = '#4F46E5';
-    ctx.fillText('Bill', col.name + diW, y + 14);
-    y += 40;
-
-    fillRect(padX, y, W - padX * 2, headH, '#F4F4F8', 8);
-    const muted = '#6B7280', dark = '#1F2937';
-    txt('ITEM',   col.name  + 10,           y + headH/2, { size: headerFontSize, weight:'700', color: muted });
-    txt('PRECIO', col.price + priceColW/2,  y + headH/2, { size: headerFontSize, weight:'700', color: muted, align:'center' });
-    people.forEach((p, i) => {
-        txt(p, col.people(i) + personColW/2, y + headH/2, { size: headerFontSize, weight:'700', color:'#4F46E5', align:'center', maxW: personColW - 8 });
-    });
-    y += headH;
-
-    items.forEach((item, idx) => {
-        fillRect(padX, y, W - padX * 2, rowH, idx % 2 === 0 ? '#fff' : '#F9FAFB');
-        hline(y + rowH);
-        txt(item.name, col.name + 10, y + rowH/2, { weight:'600', color: dark, maxW: nameColW - 16 });
-        txt('$'+fmt(item.price), col.price + priceColW/2, y + rowH/2, { weight:'700', color:'#4F46E5', align:'center', maxW: priceColW - 8 });
-        people.forEach((p, i) => {
-            const v = item.qty[p] || 0;
-            if (v > 0) txt(v, col.people(i) + personColW/2, y + rowH/2, { weight:'700', color: dark, align:'center' });
-        });
-        y += rowH;
-    });
-
-    function totalRow(label, grandVal, personFn, bg, color, bold=false) {
-        fillRect(padX, y, W - padX * 2, rowH, bg);
-        hline(y + rowH, '#E5E7EB');
-        const w = bold ? '700' : '600';
-        txt(label,    col.name  + 10,           y + rowH/2, { size: fontSize, weight: w, color, maxW: nameColW - 16 });
-        txt(grandVal, col.price + priceColW/2,  y + rowH/2, { size: fontSize, weight: w, color, align:'center', maxW: priceColW - 8 });
-        people.forEach((p, i) => {
-            const v = personFn(p);
-            if (v) txt(v, col.people(i) + personColW/2, y + rowH/2, { size: fontSize, weight: w, color, align:'center', maxW: personColW - 8 });
-        });
-        y += rowH;
-    }
-
-    const grandSub = items.reduce((s,i) => s + i.price, 0);
-    totalRow('Subtotal', '$'+fmt(grandSub), p => '$'+fmt(personSubtotal(p)), '#EEF2FF', '#1E1B4B', true);
-
-    if (d > 0 && discItems.length > 0) {
-        const gd = discItems.reduce((s,i) => s + i.price*d/100, 0);
-        totalRow(`Descuento ${d}%`, '-$'+fmt(gd), p => { const v=personDiscount(p); return v>0?'-$'+fmt(v):''; }, '#FEF3C7', '#92400E');
-    }
-    if (t > 0 && tipItems.length > 0) {
-        const gt = tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0);
-        totalRow(`Propina ${t}%`, '+$'+fmt(gt), p => { const v=personTip(p); return v>0?'+$'+fmt(v):''; }, '#DCFCE7', '#14532D');
-    }
-
-    fillRect(padX, y, W - padX * 2, rowH + 4, '#4F46E5', 8);
-    txt('TOTAL',              col.name  + 10,           y + (rowH+4)/2, { size:13, weight:'800', color:'#fff' });
-    txt('$'+fmt(grandTotal()), col.price + priceColW/2, y + (rowH+4)/2, { size:13, weight:'800', color:'#fff', align:'center', maxW: priceColW - 8 });
-    people.forEach((p, i) => {
-        txt('$'+fmt(personTotal(p)), col.people(i) + personColW/2, y + (rowH+4)/2, { size:13, weight:'800', color:'#fff', align:'center', maxW: personColW - 8 });
-    });
-
+function buildCanvas(){
+    const d=discPct(),t=tipPct(),discItems=items.filter(i=>i.applyDiscount),tipItems=items.filter(i=>i.applyTip);
+    const scale=2,padX=32,padY=28,rowH=36,headH=44,fs=12,hfs=10,nameW=180,priceW=90,perW=90;
+    const W=padX*2+nameW+priceW+people.length*perW;
+    const extraR=1+(d>0&&discItems.length>0?1:0)+(t>0&&tipItems.length>0?1:0)+1;
+    const H=padY+48+headH+(items.length+extraR)*rowH+padY;
+    const canvas=document.createElement('canvas');canvas.width=W*scale;canvas.height=H*scale;
+    const ctx=canvas.getContext('2d');ctx.scale(scale,scale);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+    function tx(str,x,y,{size=fs,weight='500',color='#111827',align='left',maxW=9999}={}){ctx.font=`${weight} ${size}px Inter,system-ui,sans-serif`;ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='middle';let s=String(str??'');while(s.length>1&&ctx.measureText(s).width>maxW)s=s.slice(0,-1);if(s!==String(str??''))s=s.slice(0,-1)+'…';ctx.fillText(s,x,y);}
+    function hl(y,c='#E5E7EB'){ctx.strokeStyle=c;ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(padX,y);ctx.lineTo(W-padX,y);ctx.stroke();}
+    function fr(x,y,w,h,c,r=0){ctx.fillStyle=c;if(r>0){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}else ctx.fillRect(x,y,w,h);}
+    const col={n:padX,p:padX+nameW,per:i=>padX+nameW+priceW+i*perW};
+    let y=padY;
+    ctx.font='800 20px Inter,system-ui,sans-serif';ctx.fillStyle='#111';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText('Di',col.n,y+14);const dw=ctx.measureText('Di').width;ctx.fillStyle='#4F46E5';ctx.fillText('Bill',col.n+dw,y+14);y+=40;
+    fr(padX,y,W-padX*2,headH,'#F4F4F8',8);
+    tx('ITEM',col.n+10,y+headH/2,{size:hfs,weight:'700',color:'#6B7280'});
+    tx('PRECIO',col.p+priceW/2,y+headH/2,{size:hfs,weight:'700',color:'#6B7280',align:'center'});
+    people.forEach((p,i)=>tx(p,col.per(i)+perW/2,y+headH/2,{size:hfs,weight:'700',color:'#4F46E5',align:'center',maxW:perW-8}));
+    y+=headH;
+    items.forEach((item,idx)=>{fr(padX,y,W-padX*2,rowH,idx%2===0?'#fff':'#F9FAFB');hl(y+rowH);tx(item.name,col.n+10,y+rowH/2,{weight:'600',color:'#1F2937',maxW:nameW-16});tx('$'+fmt(item.price),col.p+priceW/2,y+rowH/2,{weight:'700',color:'#4F46E5',align:'center',maxW:priceW-8});people.forEach((p,i)=>{const v=item.qty[p]||0;if(v>0)tx(v,col.per(i)+perW/2,y+rowH/2,{weight:'700',color:'#1F2937',align:'center'});});y+=rowH;});
+    function tRow(label,gv,pfn,bg,color,bold=false){fr(padX,y,W-padX*2,rowH,bg);hl(y+rowH,'#E5E7EB');const w=bold?'700':'600';tx(label,col.n+10,y+rowH/2,{size:fs,weight:w,color,maxW:nameW-16});tx(gv,col.p+priceW/2,y+rowH/2,{size:fs,weight:w,color,align:'center',maxW:priceW-8});people.forEach((p,i)=>{const v=pfn(p);if(v)tx(v,col.per(i)+perW/2,y+rowH/2,{size:fs,weight:w,color,align:'center',maxW:perW-8});});y+=rowH;}
+    const gs=items.reduce((s,i)=>s+i.price,0);
+    tRow('Subtotal','$'+fmt(gs),p=>'$'+fmt(personSubtotal(p)),'#EEF2FF','#1E1B4B',true);
+    if(d>0&&discItems.length>0){const gd=discItems.reduce((s,i)=>s+i.price*d/100,0);tRow(`Desc. ${d}%`,'-$'+fmt(gd),p=>{const v=personDiscount(p);return v>0?'-$'+fmt(v):''},'#FEF3C7','#92400E');}
+    if(t>0&&tipItems.length>0){const gt=tipItems.reduce((s,i)=>{const b=i.price,d2=i.applyDiscount?b*d/100:0,tb=(i.applyDiscount&&!tipAfterDiscount)?b:(b-d2);return s+tb*t/100;},0);tRow(`Prop. ${t}%`,'+$'+fmt(gt),p=>{const v=personTip(p);return v>0?'+$'+fmt(v):''},'#DCFCE7','#14532D');}
+    fr(padX,y,W-padX*2,rowH+4,'#4F46E5',8);
+    tx('TOTAL',col.n+10,y+(rowH+4)/2,{size:13,weight:'800',color:'#fff'});
+    tx('$'+fmt(grandTotal()),col.p+priceW/2,y+(rowH+4)/2,{size:13,weight:'800',color:'#fff',align:'center',maxW:priceW-8});
+    people.forEach((p,i)=>tx('$'+fmt(personTotal(p)),col.per(i)+perW/2,y+(rowH+4)/2,{size:13,weight:'800',color:'#fff',align:'center',maxW:perW-8}));
     return canvas;
 }
+function downloadImage(){if(!people.length||!items.length){alert('Agrega personas e ítems primero');return;}const url=buildCanvas().toDataURL('image/png');const a=document.createElement('a');a.href=url;a.download='dibill.png';a.click();}
+function copyImageToClipboard(){if(!people.length||!items.length){alert('Agrega personas e ítems primero');return;}buildCanvas().toBlob(blob=>{try{navigator.clipboard.write([new ClipboardItem({'image/png':blob})]).then(()=>{}).catch(()=>downloadImage());}catch(e){downloadImage();};},'image/png');}
+function shareImage(){if(!people.length||!items.length){alert('Agrega personas e ítems primero');return;}buildCanvas().toBlob(blob=>{const file=new File([blob],'dibill.png',{type:'image/png'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'DiBill'}).catch(e=>{if(e.name!=='AbortError')copyImageToClipboard();});}else copyImageToClipboard();},'image/png');}
 
-function downloadImage() {
-    if (!people.length || !items.length) { alert('Agrega personas e ítems primero'); return; }
-    const canvas  = buildCanvas();
-    const dataURL = canvas.toDataURL('image/png');
-    const a = document.createElement('a');
-    a.href = dataURL; a.download = 'dibill-cuenta.png'; a.click();
-}
-
-
-function copyWhatsapp() {
-    if (!people.length || !items.length) { alert('Agrega personas e ítems primero'); return; }
-
-    // generar la misma imagen que downloadImage() y compartirla
-    const canvas = buildCanvas();
-
-    canvas.toBlob(blob => {
-        const file = new File([blob], 'dibill-cuenta.png', { type: 'image/png' });
-
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            // compartir imagen nativa (móvil)
-            navigator.share({ files: [file], title: 'DiBill — Cuenta' })
-                .catch(err => { if (err.name !== 'AbortError') fallbackCopyText(buildText()); });
-        } else if (navigator.share) {
-            // share sin archivos (texto)
-            navigator.share({ text: buildText(), title: 'DiBill — Cuenta' })
-                .catch(err => { if (err.name !== 'AbortError') fallbackCopyText(buildText()); });
-        } else {
-            // desktop: copiar imagen al portapapeles
-            try {
-                const item = new ClipboardItem({ 'image/png': blob });
-                navigator.clipboard.write([item]).then(() => {
-                    showBtnFeedback('[onclick="copyWhatsapp()"]', '¡Imagen copiada!');
-                }).catch(() => fallbackCopyText(buildText()));
-            } catch(e) {
-                fallbackCopyText(buildText());
-            }
-        }
-    }, 'image/png');
-}
-
-function buildText() {
-    const d = discPct(), t = tipPct();
-    let text = '🧾 *CUENTA — DiBill*\n\n';
-    items.forEach(i => {
-        const unidades = i.units > 1 ? ` ×${i.units}` : '';
-        text += `• ${i.name}${unidades}: $${fmt(i.price)}\n`;
-    });
-    if (d > 0) text += `\nDescuento: ${d}%\n`;
-    if (t > 0) text += `Propina: ${t}%\n`;
-    text += '\n*LO QUE PAGA CADA UNO:*\n';
-    people.forEach(p => {
-        const pedidos = items.filter(i => (i.qty[p] || 0) > 0).map(i => i.name).join(', ');
-        text += `• *${p}*: $${fmt(personTotal(p))}`;
-        if (pedidos) text += ` _(${pedidos})_`;
-        text += '\n';
-    });
-    return text;
-}
-
-function showBtnFeedback(selector, msg) {
-    const btns = document.querySelectorAll(selector);
-    btns.forEach(btn => {
-        const orig = btn.innerHTML;
-        btn.innerHTML = `<svg><use href="#i-check"/></svg> ${msg}`;
-        setTimeout(() => btn.innerHTML = orig, 2500);
-    });
-}
-
-
-function fallbackCopyText(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        showBtnFeedback('[onclick="copyWhatsapp()"]', '¡Copiado!');
-    }).catch(() => {
-        const ta = document.createElement('textarea');
-        ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
-        document.body.appendChild(ta);
-        ta.focus(); ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        alert('✅ Copiado al portapapeles');
-    });
-}
-
-
-function openImportModal() {
-    document.getElementById('importTextarea').value = '';
-    document.getElementById('importResult').style.display = 'none';
-    document.getElementById('importError').style.display  = 'none';
-    document.getElementById('importModal').classList.add('open');
-}
-function closeImportModal() { document.getElementById('importModal').classList.remove('open'); }
-function closeImportModalOutside(e) { if (e.target === document.getElementById('importModal')) closeImportModal(); }
-
-const IMPORT_PROMPT = `Analiza la boleta en la imagen. Devuélveme SOLO un array JSON sin texto adicional, sin explicaciones, sin markdown.
-
-Reglas estrictas:
-- Usa el precio UNITARIO original de cada producto (sin descuentos aplicados)
-- Ignora completamente las líneas de: descuento, propina, subtotal, total, servicio
-- Si un producto aparece varias veces, agrúpalo sumando las cantidades
-- Los precios deben ser números enteros sin puntos, comas ni símbolos
-- Si no puedes leer un precio con certeza, omite ese item
-
-Formato exacto:
-[{"nombre":"Nombre del producto","precio":9990,"cantidad":1}]`;
-
-function copyPrompt() {
-    const prompt = IMPORT_PROMPT;
-    navigator.clipboard.writeText(prompt).then(() => {
-        const lbl = document.getElementById('copyPromptLabel');
-        lbl.textContent = '¡Copiado!';
-        setTimeout(() => lbl.textContent = 'Copiar prompt', 2000);
-    }).catch(() => {
-        // fallback
-        const ta = document.createElement('textarea');
-        ta.value = prompt;
-        document.body.appendChild(ta);
-        ta.select(); document.execCommand('copy');
-        document.body.removeChild(ta);
-        const lbl = document.getElementById('copyPromptLabel');
-        lbl.textContent = '¡Copiado!';
-        setTimeout(() => lbl.textContent = 'Copiar prompt', 2000);
-    });
-}
-
-function doImport() {
-    const raw = document.getElementById('importTextarea').value.trim();
-    const resultEl = document.getElementById('importResult');
-    const errorEl  = document.getElementById('importError');
-    resultEl.style.display = 'none';
-    errorEl.style.display  = 'none';
-
-    if (!raw) { errorEl.textContent = 'Pega la respuesta del chat primero.'; errorEl.style.display = 'block'; return; }
-
-    // limpiar caracteres especiales que pegan apps de chat
-    const cleaned = raw
-        .replace(/[“”„‟″‶]/g, '"') // comillas tipográficas → "
-        .replace(/[‘’‚‛′‵]/g, "'") // comillas simples tipográficas → '
-        .replace(/[–—]/g, '-')  // guiones largos → -
-        .trim();
-
-    // intentar parsear directo, o extraer JSON si viene con texto alrededor
+function openImportModal(){document.getElementById('importTA').value='';document.getElementById('importOk').style.display='none';document.getElementById('importErr').style.display='none';document.getElementById('importModal').classList.add('open');}
+function closeImportModal(){document.getElementById('importModal').classList.remove('open');}
+const IMPORT_PROMPT=`Analiza la boleta en la imagen. Devuélveme SOLO un array JSON sin texto adicional.\n\nReglas:\n- Precio UNITARIO sin descuentos\n- Ignora: descuento, propina, subtotal, total, servicio\n- Agrupa duplicados sumando cantidades\n- Precios como enteros sin puntos ni comas\n\nFormato: [{\"nombre\":\"Producto\",\"precio\":9990,\"cantidad\":1}]`;
+function copyImportPrompt(){navigator.clipboard.writeText(IMPORT_PROMPT).then(()=>{const l=document.getElementById('copyPromptLbl');if(l){l.textContent='¡Copiado!';setTimeout(()=>l.textContent='Copiar prompt para Claude / ChatGPT',2000);}}).catch(()=>{const ta=document.createElement('textarea');ta.value=IMPORT_PROMPT;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});}
+function doImport(){
+    const raw=document.getElementById('importTA').value.trim(),ok=document.getElementById('importOk'),err=document.getElementById('importErr');
+    ok.style.display='none';err.style.display='none';
+    if(!raw){err.textContent='Pega la respuesta primero';err.style.display='block';return;}
+    const cleaned=raw.replace(/[\u201C\u201D\u201E\u201F]/g,'"').replace(/[\u2018\u2019\u201A\u201B]/g,"'").trim();
     let parsed;
-    try {
-        // primero intentar el texto completo
-        parsed = JSON.parse(cleaned);
-    } catch(e) {
-        // buscar un array JSON dentro del texto
-        const start = cleaned.indexOf('[');
-        const end   = cleaned.lastIndexOf(']');
-        if (start === -1 || end === -1 || end <= start) {
-            errorEl.textContent = 'No encontré un JSON válido. Asegúrate de copiar la respuesta completa del chat.';
-            errorEl.style.display = 'block'; return;
-        }
-        try { parsed = JSON.parse(cleaned.slice(start, end + 1)); }
-        catch(e2) { errorEl.textContent = 'El JSON tiene errores de formato. Intenta pedirle de nuevo al chat.'; errorEl.style.display = 'block'; return; }
-    }
-
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-        errorEl.textContent = 'La respuesta no contiene items válidos.';
-        errorEl.style.display = 'block'; return;
-    }
-
-    let imported = 0;
-    let skipped  = 0;
-
-    parsed.forEach(item => {
-        // normalizar campos (acepta variantes en español e inglés)
-        const nombre   = item.nombre || item.name || item.producto || item.item || '';
-        const precioRaw = item.precio || item.price || item.precio_unitario || 0;
-        const cantRaw   = item.cantidad || item.quantity || item.qty || 1;
-
-        // limpiar precio: sacar puntos, comas, símbolos
-        const precio = parseInt(String(precioRaw).replace(/[^0-9]/g, '')) || 0;
-        const cant   = parseInt(cantRaw) || 1;
-
-        if (!nombre || precio <= 0) { skipped++; return; }
-
-        // buscar si ya existe
-        const existing = items.find(i => i.name.toLowerCase() === nombre.toLowerCase());
-        if (existing) {
-            existing.units    += cant;
-            existing.unitPrice = precio;
-            existing.price     = existing.unitPrice * existing.units;
-        } else {
-            const qty = {};
-            people.forEach(p => qty[p] = 0);
-            items.push({ id: Date.now() + Math.random(), name: nombre, price: precio * cant, unitPrice: precio, units: cant, qty, applyDiscount: discScope === 'all' && discPct() > 0, applyTip: tipScope === 'all' && tipPct() > 0 });
-        }
-        imported++;
-    });
-
-    if (imported === 0) {
-        errorEl.textContent = 'No se pudo importar ningún item. Revisa el formato.';
-        errorEl.style.display = 'block'; return;
-    }
-
-    const msg = skipped > 0
-        ? `✓ ${imported} items importados. ${skipped} omitidos por datos incompletos.`
-        : `✓ ${imported} items importados correctamente.`;
-
-    resultEl.textContent   = msg;
-    resultEl.style.display = 'block';
-
-    renderAll();
-    setTimeout(closeImportModal, 1200);
+    try{parsed=JSON.parse(cleaned);}catch(e){const s=cleaned.indexOf('['),end=cleaned.lastIndexOf(']');if(s<0||end<=s){err.textContent='No encontré un JSON válido';err.style.display='block';return;}try{parsed=JSON.parse(cleaned.slice(s,end+1));}catch(e2){err.textContent='JSON con errores. Pídele de nuevo al chat.';err.style.display='block';return;}}
+    if(!Array.isArray(parsed)||!parsed.length){err.textContent='Sin ítems válidos';err.style.display='block';return;}
+    let imp=0,skip=0;
+    parsed.forEach(item=>{const nombre=item.nombre||item.name||item.producto||'',precio=parseInt(String(item.precio||item.price||0).replace(/[^0-9]/g,''))||0,cant=parseInt(item.cantidad||item.quantity||item.qty||1)||1;if(!nombre||precio<=0){skip++;return;}const ex=items.find(i=>i.name.toLowerCase()===nombre.toLowerCase());if(ex){ex.units+=cant;ex.unitPrice=precio;ex.price=ex.unitPrice*ex.units;}else{const q={};people.forEach(p=>q[p]=0);items.push({id:Date.now()+Math.random(),name:nombre,price:precio*cant,unitPrice:precio,units:cant,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}imp++;});
+    if(!imp){err.textContent='No se importó ningún ítem';err.style.display='block';return;}
+    ok.textContent='✓ '+imp+' ítems importados'+(skip>0?' ('+skip+' omitidos)':'')+'.';ok.style.display='block';
+    renderAll();setTimeout(closeImportModal,1200);
 }
 
-/* ── PWA Install ── */
-let deferredPrompt = null;
-const installBtn   = document.getElementById('installBtn');
+document.getElementById('inPerson').addEventListener('keydown',e=>{if(e.key==='Enter')addPerson();});
+document.getElementById('inItem').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('inPrice').focus();});
+document.getElementById('inPrice').addEventListener('keydown',e=>{if(e.key==='Enter'){const q=document.getElementById('inQty');q?q.focus():addItem();}});
+document.getElementById('inQty')?.addEventListener('keydown',e=>{if(e.key==='Enter')addItem();});
 
-window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.style.display = 'flex';
-});
+items.forEach(i=>i.applyTip=tipPct()>0);
+renderAll();
 
-installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') installBtn.style.display = 'none';
-    deferredPrompt = null;
-});
-
-window.addEventListener('appinstalled', () => {
-    installBtn.style.display = 'none';
-});
-
-/* ── Service Worker (cache offline) ── */
-if ('serviceWorker' in navigator) {
-    const swCode = `
-        const CACHE = 'dibill-v1';
-        self.addEventListener('install', e => {
-            e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
-            self.skipWaiting();
-        });
-        self.addEventListener('activate', e => {
-            e.waitUntil(caches.keys().then(keys =>
-                Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-            ));
-            self.clients.claim();
-        });
-        self.addEventListener('fetch', e => {
-            e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
-        });
-    `;
-    const swBlob = new Blob([swCode], { type: 'application/javascript' });
-    const swURL  = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swURL, { scope: '/' }).catch(() => {});
-}
 </script>
 </body>
 </html>
