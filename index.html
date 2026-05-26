@@ -867,11 +867,11 @@ const discPct = () => parseFloat(document.getElementById('inDiscount').value) ||
 const tipPct  = () => parseFloat(document.getElementById('inTip').value)      || 0;
 const fmt = n  => Math.round(n).toLocaleString('es-CL');
 const fmtQty = v => {
-    if(v===0) return '0';
+    if(!v||v===0) return '0';
     if(Number.isInteger(v)) return String(v);
-    // mostrar como fracción si es divisible limpia, si no 2 decimales
-    const r=Math.round(v*100)/100;
-    return r%1===0 ? String(r) : r.toFixed(2).replace(/\.?0+$/,'');
+    const r = Math.round(v*100)/100;
+    if(Number.isInteger(r)) return String(r);
+    return r.toFixed(2);
 };
 const esc = s  => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
@@ -891,7 +891,7 @@ function addItem(){
     if(!name||isNaN(price)||price<=0){alert('Completa nombre y precio');return;}
     const ex=items.find(i=>i.name.toLowerCase()===name.toLowerCase());
     if(ex){ex.units+=qty;ex.unitPrice=price;ex.price=ex.unitPrice*ex.units;}
-    else{const q={};people.forEach(p=>q[p]=0);items.push({id:Date.now(),name,price:price*qty,unitPrice:price,units:qty,fractional:false,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}
+    else{const q={};people.forEach(p=>q[p]=0);items.push({id:Date.now(),name,price:price*qty,unitPrice:price,units:qty,fractional:false,splitEq:false,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}
     iInp.value='';pInp.value='';if(qInp)qInp.value='1';iInp.focus();renderAll();
 }
 function removeItem(id){items=items.filter(i=>i.id!==id);renderAll();}
@@ -937,49 +937,48 @@ function splitEqual(id){
     renderBadges();renderTotals();renderStats();renderChips();
 }
 function toggleSplitEq(id){
-    const cb=document.getElementById('speq-'+id);if(!cb)return;
-    cb.checked=!cb.checked;
-    const panel=cb.closest('.assign-panel');
-    if(panel) panel.classList.toggle('split-eq-active', cb.checked);
-    if(cb.checked){
-        // por defecto marcar a todos
-        const it=items.find(i=>i.id===id);
-        if(it) people.forEach(p=>it.qty[p]=it.qty[p]||0);
+    const item=items.find(i=>i.id===id); if(!item)return;
+    item.splitEq = !item.splitEq;
+    if(item.splitEq){
         splitEqual(id);
     } else {
-        const it=items.find(i=>i.id===id);
-        if(it)people.forEach(p=>{
-            it.qty[p]=0;
-            const pid=p.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
-            if(el)el.textContent='0';
-            const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=true;
-        });
-        renderBadges();renderTotals();renderStats();renderChips();
+        people.forEach(p=>item.qty[p]=0);
+        renderBadges(); renderTotals(); renderStats(); renderChips();
     }
-    // re-render solo los checkboxes y clases
+    // re-render el panel del item para reflejar el nuevo estado
+    renderItemPanel(id);
+}
+
+function renderItemPanel(id){
+    const item=items.find(i=>i.id===id); if(!item)return;
+    const panel=document.querySelector('#irow-'+id+' .assign-panel');
+    if(!panel)return;
+    // actualizar clase
+    panel.classList.toggle('split-eq-active', item.splitEq);
+    // actualizar checkbox principal
+    const cb=document.getElementById('speq-'+id);
+    if(cb) cb.checked=item.splitEq;
+    // actualizar person-checks y valores
     const ppl=document.getElementById('spp-'+id);
-    if(ppl){
-        ppl.querySelectorAll('.person-check').forEach((chk,i)=>{
-            const it=items.find(x=>x.id===id);
-            if(it){chk.checked=cb.checked&&(it.qty[people[i]]||0)>0;}
-        });
-        ppl.querySelectorAll('.split-prow').forEach((row,i)=>{
-            const it=items.find(x=>x.id===id);
-            row.classList.toggle('in-split', cb.checked&&it&&(it.qty[people[i]]||0)>0);
-        });
-    }
+    if(!ppl)return;
+    people.forEach(p=>{
+        const pid=p.replace(/[^a-zA-Z0-9]/g,'_');
+        const chk=document.getElementById('pchk-'+id+'-'+pid);
+        const valEl=document.getElementById('qv-'+id+'-'+pid);
+        const row=document.getElementById('spr-'+id+'-'+pid);
+        const v=item.qty[p]||0;
+        const inSplit=item.splitEq&&v>0;
+        if(chk){ chk.checked=inSplit; }
+        if(valEl){ valEl.textContent=fmtQty(v); }
+        if(row){ row.classList.toggle('in-split',inSplit); }
+        const ctrl=valEl?.closest('.qty-ctrl');
+        if(ctrl) ctrl.querySelector('.qty-btn').disabled=v<=0;
+    });
 }
 
 function togglePersonInSplit(id, person, checked){
     const item=items.find(i=>i.id===id);if(!item)return;
-    if(!checked){
-        // desmarcar persona: poner en 0
-        item.qty[person]=0;
-        const pid=person.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
-        if(el)el.textContent='0';
-        const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=true;
-    }
-    // recalcular split entre los que siguen marcados
+    if(!checked){ item.qty[person]=0; }
     redistributeSplit(id);
 }
 
@@ -988,10 +987,11 @@ function redistributeSplit(id){
     const cb=document.getElementById('speq-'+id);
     if(!cb||!cb.checked)return;
     // personas actualmente marcadas (con checkbox checked)
-    const ppl=document.getElementById('spp-'+id);
-    if(!ppl)return;
-    const checks=[...ppl.querySelectorAll('.person-check')];
-    const active=people.filter((_,i)=>checks[i]?.checked);
+    const active=people.filter(p=>{
+        const pid=p.replace(/[^a-zA-Z0-9]/g,'_');
+        const chk=document.getElementById('pchk-'+id+'-'+pid);
+        return chk ? chk.checked : (item.qty[p]||0)>0;
+    });
     if(!active.length)return;
     const units=item.units||1;
     const n=active.length, exact=units/n;
@@ -1003,10 +1003,11 @@ function redistributeSplit(id){
         if(el)el.textContent=isActive?fmtQty(exact):'0';
         const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=val<=0;
         // sync check visual
-        if(checks[people.indexOf(p)]){
-            checks[people.indexOf(p)].checked=isActive;
-            el?.closest('.split-prow')?.classList.toggle('in-split',isActive);
-        }
+        const pid2=p.replace(/[^a-zA-Z0-9]/g,'_');
+        const chk=document.getElementById('pchk-'+id+'-'+pid2);
+        if(chk) chk.checked=isActive;
+        const row=document.getElementById('spr-'+id+'-'+pid2);
+        if(row) row.classList.toggle('in-split',isActive);
     });
     renderBadges();renderTotals();renderStats();renderChips();
 }
@@ -1043,7 +1044,7 @@ function renderItems(){
         }
         const showDisc=hasDisc&&discScope==='manual',showTip=hasTip&&tipScope==='manual';
         const flags=(showDisc||showTip)?`<div class="item-flags">${showDisc?`<label class="flag-chip disc ${item.applyDiscount?'active':''}"><input type="checkbox" ${item.applyDiscount?'checked':''} onchange="toggleDiscount(${item.id},this.checked)"><svg><use href="#i-tag"/></svg> Desc.</label>`:''} ${showTip?`<label class="flag-chip tip ${item.applyTip?'active':''}"><input type="checkbox" ${item.applyTip?'checked':''} onchange="toggleTip(${item.id},this.checked)"><svg><use href="#i-handshake"/></svg> Prop.</label>`:''}</div>`:'';
-        const splitOn = document.getElementById('speq-'+item.id)?.checked || false;
+        const splitOn = item.splitEq || false;
         const pRows=people.map(p=>{
             const v=item.qty[p]||0, pid=p.replace(/[^a-zA-Z0-9]/g,'_');
             const inSplit = splitOn && v > 0;
@@ -1062,7 +1063,7 @@ function renderItems(){
         }).join('');
         const panel=people.length?`<div class="assign-panel${splitOn?' split-eq-active':''}" onclick="event.stopPropagation()">
             <div class="split-eq-row" onclick="event.stopPropagation();toggleSplitEq(${item.id})">
-                <input type="checkbox" id="speq-${item.id}" ${splitOn?'checked':''} onclick="event.stopPropagation()">
+                <input type="checkbox" id="speq-${item.id}" ${item.splitEq?'checked':''} onclick="event.stopPropagation()">
                 <span class="split-eq-label">⚡ Dividir en partes iguales</span>
             </div>
             <div class="split-ppl" id="spp-${item.id}">${pRows}</div>
@@ -1115,7 +1116,7 @@ function buildPreview(){
     let h=`<table style="width:100%;border-collapse:collapse;font-size:.88rem;color:#222"><thead><tr><th ${s};background:#f3f4f6;font-weight:700;text-align:left">Item</th><th ${s};background:#f3f4f6;font-weight:700;text-align:right">Precio</th>`;
     people.forEach(p=>h+=`<th ${s};background:#f3f4f6;font-weight:700;text-align:right">${esc(p)}</th>`);
     h+='</tr></thead><tbody>';
-    items.forEach(item=>{h+=`<tr><td ${s}">${esc(item.name)}</td><td ${s};text-align:right">$${fmt(item.price)}</td>`;people.forEach(p=>{const v=item.qty[p]||0;h+=`<td ${s};text-align:right">${v>0?v:''}</td>`;});h+='</tr>';});
+    items.forEach(item=>{h+=`<tr><td ${s}">${esc(item.name)}</td><td ${s};text-align:right">$${fmt(item.price)}</td>`;people.forEach(p=>{const v=item.qty[p]||0;h+=`<td ${s};text-align:right">${v>0?fmtQty(v):''}</td>`;});h+='</tr>';});
     const gs=items.reduce((s,i)=>s+i.price,0);
     h+=`<tr style="background:#eff6ff"><td ${s};font-weight:700">Subtotal</td><td ${s};text-align:right;font-weight:700">$${fmt(gs)}</td>`;
     people.forEach(p=>h+=`<td ${s};text-align:right;font-weight:700">$${fmt(personSubtotal(p))}</td>`);h+='</tr>';
@@ -1146,7 +1147,7 @@ function buildCanvas(){
     tx('PRECIO',col.p+priceW/2,y+headH/2,{size:hfs,weight:'700',color:'#6B7280',align:'center'});
     people.forEach((p,i)=>tx(p,col.per(i)+perW/2,y+headH/2,{size:hfs,weight:'700',color:'#4F46E5',align:'center',maxW:perW-8}));
     y+=headH;
-    items.forEach((item,idx)=>{fr(padX,y,W-padX*2,rowH,idx%2===0?'#fff':'#F9FAFB');hl(y+rowH);tx(item.name,col.n+10,y+rowH/2,{weight:'600',color:'#1F2937',maxW:nameW-16});tx('$'+fmt(item.price),col.p+priceW/2,y+rowH/2,{weight:'700',color:'#4F46E5',align:'center',maxW:priceW-8});people.forEach((p,i)=>{const v=item.qty[p]||0;if(v>0)tx(v,col.per(i)+perW/2,y+rowH/2,{weight:'700',color:'#1F2937',align:'center'});});y+=rowH;});
+    items.forEach((item,idx)=>{fr(padX,y,W-padX*2,rowH,idx%2===0?'#fff':'#F9FAFB');hl(y+rowH);tx(item.name,col.n+10,y+rowH/2,{weight:'600',color:'#1F2937',maxW:nameW-16});tx('$'+fmt(item.price),col.p+priceW/2,y+rowH/2,{weight:'700',color:'#4F46E5',align:'center',maxW:priceW-8});people.forEach((p,i)=>{const v=item.qty[p]||0;if(v>0)tx(fmtQty(v),col.per(i)+perW/2,y+rowH/2,{weight:'700',color:'#1F2937',align:'center'});});y+=rowH;});
     function tRow(label,gv,pfn,bg,color,bold=false){fr(padX,y,W-padX*2,rowH,bg);hl(y+rowH,'#E5E7EB');const w=bold?'700':'600';tx(label,col.n+10,y+rowH/2,{size:fs,weight:w,color,maxW:nameW-16});tx(gv,col.p+priceW/2,y+rowH/2,{size:fs,weight:w,color,align:'center',maxW:priceW-8});people.forEach((p,i)=>{const v=pfn(p);if(v)tx(v,col.per(i)+perW/2,y+rowH/2,{size:fs,weight:w,color,align:'center',maxW:perW-8});});y+=rowH;}
     const gs=items.reduce((s,i)=>s+i.price,0);
     tRow('Subtotal','$'+fmt(gs),p=>'$'+fmt(personSubtotal(p)),'#EEF2FF','#1E1B4B',true);
@@ -1175,7 +1176,7 @@ function doImport(){
     try{parsed=JSON.parse(cleaned);}catch(e){const s=cleaned.indexOf('['),end=cleaned.lastIndexOf(']');if(s<0||end<=s){err.textContent='No encontré un JSON válido';err.style.display='block';return;}try{parsed=JSON.parse(cleaned.slice(s,end+1));}catch(e2){err.textContent='JSON con errores. Pídele de nuevo al chat.';err.style.display='block';return;}}
     if(!Array.isArray(parsed)||!parsed.length){err.textContent='Sin ítems válidos';err.style.display='block';return;}
     let imp=0,skip=0;
-    parsed.forEach(item=>{const nombre=item.nombre||item.name||item.producto||'',precio=parseInt(String(item.precio||item.price||0).replace(/[^0-9]/g,''))||0,cant=parseInt(item.cantidad||item.quantity||item.qty||1)||1;if(!nombre||precio<=0){skip++;return;}const ex=items.find(i=>i.name.toLowerCase()===nombre.toLowerCase());if(ex){ex.units+=cant;ex.unitPrice=precio;ex.price=ex.unitPrice*ex.units;}else{const q={};people.forEach(p=>q[p]=0);items.push({id:Date.now()+Math.random(),name:nombre,price:precio*cant,unitPrice:precio,units:cant,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}imp++;});
+    parsed.forEach(item=>{const nombre=item.nombre||item.name||item.producto||'',precio=parseInt(String(item.precio||item.price||0).replace(/[^0-9]/g,''))||0,cant=parseInt(item.cantidad||item.quantity||item.qty||1)||1;if(!nombre||precio<=0){skip++;return;}const ex=items.find(i=>i.name.toLowerCase()===nombre.toLowerCase());if(ex){ex.units+=cant;ex.unitPrice=precio;ex.price=ex.unitPrice*ex.units;}else{const q={};people.forEach(p=>q[p]=0);items.push({id:Date.now()+Math.random(),name:nombre,price:precio*cant,unitPrice:precio,units:cant,fractional:false,splitEq:false,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}imp++;});
     if(!imp){err.textContent='No se importó ningún ítem';err.style.display='block';return;}
     ok.textContent='✓ '+imp+' ítems importados'+(skip>0?' ('+skip+' omitidos)':'')+'.';ok.style.display='block';
     renderAll();setTimeout(closeImportModal,1200);
