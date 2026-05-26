@@ -895,6 +895,10 @@ function addItem(){
     iInp.value='';pInp.value='';if(qInp)qInp.value='1';iInp.focus();renderAll();
 }
 function removeItem(id){items=items.filter(i=>i.id!==id);renderAll();}
+function toggleItemExpand(id){
+    const el=document.getElementById('irow-'+id) || document.querySelector('[data-id="'+id+'"]');
+    if(el) el.classList.toggle('expanded');
+}
 function toggleFractional(id){
     const item=items.find(i=>i.id===id);if(!item)return;
     item.fractional=!item.fractional;
@@ -1064,7 +1068,7 @@ function renderItems(){
             <div class="split-ppl" id="spp-${item.id}">${pRows}</div>
         </div>`:'';
         const isExp=expanded.has(item.id);
-        return `<div class="item-row${isExp?' expanded':''}" data-id="${item.id}" onclick="if(!event.target.closest('.assign-panel,.btn-del,input,label'))this.classList.toggle('expanded')"><div style="display:flex;align-items:center;gap:6px"><svg class="item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg><div style="flex:1;min-width:0"><div style="font-weight:600;color:var(--text);font-size:.82rem;line-height:1.3;white-space:normal">${esc(item.name)}</div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:3px"><span style="color:var(--primary-2);font-weight:800;font-size:.88rem;font-variant-numeric:tabular-nums">$${fmt(item.price)}${unitInfo}</span>${badge}<button class="btn-del" onclick="event.stopPropagation();removeItem(${item.id})" aria-label="Eliminar"><svg><use href="#i-trash"/></svg></button></div></div></div>${flags}${panel}</div>`;
+        return `<div class="item-row${isExp?' expanded':''}" data-id="${item.id}" id="irow-${item.id}"><div class="item-toggle" onclick="toggleItemExpand(${item.id})" style="display:flex;align-items:center;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent"><svg class="item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg><div style="flex:1;min-width:0"><div style="font-weight:600;color:var(--text);font-size:.82rem;line-height:1.3;white-space:normal">${esc(item.name)}</div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:3px"><span style="color:var(--primary-2);font-weight:800;font-size:.88rem;font-variant-numeric:tabular-nums">$${fmt(item.price)}${unitInfo}</span>${badge}<button class="btn-del" onclick="event.stopPropagation();removeItem(${item.id})" aria-label="Eliminar"><svg><use href="#i-trash"/></svg></button></div></div></div>${flags}${panel}</div>`;
     }).join('');
     updateStatusBadge();
 }
