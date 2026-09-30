@@ -860,6 +860,7 @@
 let people = [];
 let items  = [];
 let tipAfterDiscount = true;
+let nextId = 1;
 let discScope = 'all';
 let tipScope  = 'all';
 
@@ -891,12 +892,12 @@ function addItem(){
     if(!name||isNaN(price)||price<=0){alert('Completa nombre y precio');return;}
     const ex=items.find(i=>i.name.toLowerCase()===name.toLowerCase());
     if(ex){ex.units+=qty;ex.unitPrice=price;ex.price=ex.unitPrice*ex.units;}
-    else{const q={};people.forEach(p=>q[p]=0);items.push({id:Date.now(),name,price:price*qty,unitPrice:price,units:qty,fractional:false,splitEq:false,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}
+    else{const q={};people.forEach(p=>q[p]=0);items.push({id:nextId++,name,price:price*qty,unitPrice:price,units:qty,fractional:false,splitEq:false,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}
     iInp.value='';pInp.value='';if(qInp)qInp.value='1';iInp.focus();renderAll();
 }
 function removeItem(id){items=items.filter(i=>i.id!==id);renderAll();}
 function toggleItemExpand(id){
-    const el=document.getElementById('irow-'+id) || document.querySelector('[data-id="'+id+'"]');
+    const el=document.getElementById('irow-'+id);
     if(el) el.classList.toggle('expanded');
 }
 function toggleFractional(id){
@@ -946,7 +947,7 @@ function togglePersonInSplit(id,idx,checked){
 }
 function renderItemPanel(id){
     const item=items.find(i=>i.id===id);if(!item)return;
-    const panel=document.querySelector('#irow-'+id+' .assign-panel');if(!panel)return;
+    const row0=document.getElementById('irow-'+id),panel=row0&&row0.querySelector('.assign-panel');if(!panel)return;
     panel.classList.toggle('split-eq-active',!!item.splitEq);
     const cb=document.getElementById('speq-'+id);if(cb)cb.checked=!!item.splitEq;
     people.forEach(p=>{
@@ -979,7 +980,7 @@ function renderItems(){
     const tipBtn=document.getElementById('tipToggleBtn');
     if(tipBtn)tipBtn.style.display=(hasDisc&&hasTip)?'inline-flex':'none';
     const card=document.getElementById('itemsCard');if(card)card.style.display=items.length?'block':'none';
-    const expanded=new Set([...document.querySelectorAll('.item-row.expanded')].map(el=>parseInt(el.dataset.id)));
+    const expanded=new Set([...document.querySelectorAll('.item-row.expanded')].map(el=>Number(el.dataset.id)));
     list.innerHTML=items.map(item=>{
         const unitInfo=item.units>1?`<span style="font-size:.65rem;color:var(--text-muted);margin-left:3px">${item.units}x $${fmt(item.unitPrice)}c/u</span>`:'';
         const assigned=Math.round(people.reduce((s,p)=>s+(item.qty[p]||0),0)*1000)/1000,total=item.units||1;
@@ -1123,7 +1124,7 @@ function doImport(){
     try{parsed=JSON.parse(cleaned);}catch(e){const s=cleaned.indexOf('['),end=cleaned.lastIndexOf(']');if(s<0||end<=s){err.textContent='No encontré un JSON válido';err.style.display='block';return;}try{parsed=JSON.parse(cleaned.slice(s,end+1));}catch(e2){err.textContent='JSON con errores. Pídele de nuevo al chat.';err.style.display='block';return;}}
     if(!Array.isArray(parsed)||!parsed.length){err.textContent='Sin ítems válidos';err.style.display='block';return;}
     let imp=0,skip=0;
-    parsed.forEach(item=>{const nombre=item.nombre||item.name||item.producto||'',precio=parseInt(String(item.precio||item.price||0).replace(/[^0-9]/g,''))||0,cant=parseInt(item.cantidad||item.quantity||item.qty||1)||1;if(!nombre||precio<=0){skip++;return;}const ex=items.find(i=>i.name.toLowerCase()===nombre.toLowerCase());if(ex){ex.units+=cant;ex.unitPrice=precio;ex.price=ex.unitPrice*ex.units;}else{const q={};people.forEach(p=>q[p]=0);items.push({id:Date.now()+Math.random(),name:nombre,price:precio*cant,unitPrice:precio,units:cant,fractional:false,splitEq:false,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}imp++;});
+    parsed.forEach(item=>{const nombre=item.nombre||item.name||item.producto||'',precio=parseInt(String(item.precio||item.price||0).replace(/[^0-9]/g,''))||0,cant=parseInt(item.cantidad||item.quantity||item.qty||1)||1;if(!nombre||precio<=0){skip++;return;}const ex=items.find(i=>i.name.toLowerCase()===nombre.toLowerCase());if(ex){ex.units+=cant;ex.unitPrice=precio;ex.price=ex.unitPrice*ex.units;}else{const q={};people.forEach(p=>q[p]=0);items.push({id:nextId++,name:nombre,price:precio*cant,unitPrice:precio,units:cant,fractional:false,splitEq:false,qty:q,applyDiscount:discScope==='all'&&discPct()>0,applyTip:tipScope==='all'&&tipPct()>0});}imp++;});
     if(!imp){err.textContent='No se importó ningún ítem';err.style.display='block';return;}
     ok.textContent='✓ '+imp+' ítems importados'+(skip>0?' ('+skip+' omitidos)':'')+'.';ok.style.display='block';
     renderAll();setTimeout(closeImportModal,1200);
