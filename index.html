@@ -883,7 +883,7 @@ function personTip(p){return items.reduce((s,i)=>{if(!i.applyTip)return s;const 
 function grandTotal(){return items.reduce((s,i)=>{const base=i.price,disc=i.applyDiscount?base*discPct()/100:0,post=base-disc,tb=(i.applyTip&&i.applyDiscount&&!tipAfterDiscount)?base:post;return s+post+(i.applyTip?tb*tipPct()/100:0);},0);}
 
 function addPerson(){const inp=document.getElementById('inPerson'),name=inp.value.trim();if(!name){inp.focus();return;}if(people.includes(name)){alert('Esa persona ya existe');return;}people.push(name);items.forEach(i=>i.qty[name]=0);inp.value='';renderAll();}
-function removePerson(name){people=people.filter(p=>p!==name);items.forEach(i=>delete i.qty[name]);renderAll();}
+function removePerson(name){people=people.filter(p=>p!==name);items.forEach(i=>{delete i.qty[name];if(i.splitEq){i.splitPeople=(i.splitPeople||[]).filter(p=>p!==name);distributeSplit(i);}});renderAll();}
 
 function addItem(){
     const iInp=document.getElementById('inItem'),pInp=document.getElementById('inPrice'),qInp=document.getElementById('inQty');
@@ -921,95 +921,42 @@ function adjustQty(id,person,delta){
     const pid=person.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
     if(el)el.textContent=fmtQty(v);
     const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=v<=0;
-    const cb=document.getElementById('speq-'+id);if(cb&&cb.checked)cb.checked=false;
+    if(item.splitEq){item.splitEq=false;renderItemPanel(id);}
     renderBadges();renderTotals();renderStats();renderChips();
 }
-function splitEqual(id){
-    const item=items.find(i=>i.id===id);if(!item||!people.length)return;
-    const units=item.units||1, n=people.length;
-    const exact=units/n; // fracción exacta, sin redondear
-    people.forEach(p=>{
-        item.qty[p]=exact;
-        const pid=p.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
-        if(el)el.textContent=fmtQty(exact);
-        const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=exact<=0;
-    });
-    renderBadges();renderTotals();renderStats();renderChips();
+function distributeSplit(item){
+    const sel=people.filter(p=>(item.splitPeople||[]).includes(p));
+    const each=sel.length?(item.units||1)/sel.length:0;
+    people.forEach(p=>item.qty[p]=sel.includes(p)?each:0);
 }
+function refreshItem(id){renderItemPanel(id);renderBadges();renderTotals();renderStats();renderChips();}
 function toggleSplitEq(id){
-    const item=items.find(i=>i.id===id); if(!item)return;
-    item.splitEq = !item.splitEq;
-    if(item.splitEq){
-        splitEqual(id);
-    } else {
-        people.forEach(p=>item.qty[p]=0);
-        renderBadges(); renderTotals(); renderStats(); renderChips();
-    }
-    // re-render el panel del item para reflejar el nuevo estado
-    renderItemPanel(id);
+    const item=items.find(i=>i.id===id);if(!item||!people.length)return;
+    item.splitEq=!item.splitEq;
+    if(item.splitEq){item.splitPeople=[...people];distributeSplit(item);}
+    else people.forEach(p=>item.qty[p]=0);
+    refreshItem(id);
 }
-
+function togglePersonInSplit(id,idx,checked){
+    const item=items.find(i=>i.id===id),p=people[idx];if(!item||!p)return;
+    item.splitPeople=(item.splitPeople||[]).filter(x=>x!==p);
+    if(checked)item.splitPeople.push(p);
+    distributeSplit(item);
+    refreshItem(id);
+}
 function renderItemPanel(id){
-    const item=items.find(i=>i.id===id); if(!item)return;
-    const panel=document.querySelector('#irow-'+id+' .assign-panel');
-    if(!panel)return;
-    // actualizar clase
-    panel.classList.toggle('split-eq-active', item.splitEq);
-    // actualizar checkbox principal
-    const cb=document.getElementById('speq-'+id);
-    if(cb) cb.checked=item.splitEq;
-    // actualizar person-checks y valores
-    const ppl=document.getElementById('spp-'+id);
-    if(!ppl)return;
-    people.forEach(p=>{
-        const pid=p.replace(/[^a-zA-Z0-9]/g,'_');
-        const chk=document.getElementById('pchk-'+id+'-'+pid);
-        const valEl=document.getElementById('qv-'+id+'-'+pid);
-        const row=document.getElementById('spr-'+id+'-'+pid);
-        const v=item.qty[p]||0;
-        const inSplit=item.splitEq&&v>0;
-        if(chk){ chk.checked=inSplit; }
-        if(valEl){ valEl.textContent=fmtQty(v); }
-        if(row){ row.classList.toggle('in-split',inSplit); }
-        const ctrl=valEl?.closest('.qty-ctrl');
-        if(ctrl) ctrl.querySelector('.qty-btn').disabled=v<=0;
-    });
-}
-
-function togglePersonInSplit(id, person, checked){
     const item=items.find(i=>i.id===id);if(!item)return;
-    if(!checked){ item.qty[person]=0; }
-    redistributeSplit(id);
-}
-
-function redistributeSplit(id){
-    const item=items.find(i=>i.id===id);if(!item)return;
-    const cb=document.getElementById('speq-'+id);
-    if(!cb||!cb.checked)return;
-    // personas actualmente marcadas (con checkbox checked)
-    const active=people.filter(p=>{
-        const pid=p.replace(/[^a-zA-Z0-9]/g,'_');
-        const chk=document.getElementById('pchk-'+id+'-'+pid);
-        return chk ? chk.checked : (item.qty[p]||0)>0;
-    });
-    if(!active.length)return;
-    const units=item.units||1;
-    const n=active.length, exact=units/n;
+    const panel=document.querySelector('#irow-'+id+' .assign-panel');if(!panel)return;
+    panel.classList.toggle('split-eq-active',!!item.splitEq);
+    const cb=document.getElementById('speq-'+id);if(cb)cb.checked=!!item.splitEq;
     people.forEach(p=>{
-        const isActive=active.includes(p);
-        const val=isActive?exact:0;
-        item.qty[p]=val;
-        const pid=p.replace(/[^a-zA-Z0-9]/g,'_'),el=document.getElementById('qv-'+id+'-'+pid);
-        if(el)el.textContent=isActive?fmtQty(exact):'0';
-        const ctrl=el?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=val<=0;
-        // sync check visual
-        const pid2=p.replace(/[^a-zA-Z0-9]/g,'_');
-        const chk=document.getElementById('pchk-'+id+'-'+pid2);
-        if(chk) chk.checked=isActive;
-        const row=document.getElementById('spr-'+id+'-'+pid2);
-        if(row) row.classList.toggle('in-split',isActive);
+        const pid=p.replace(/[^a-zA-Z0-9]/g,'_'),v=item.qty[p]||0;
+        const inSplit=item.splitEq&&(item.splitPeople||[]).includes(p);
+        const chk=document.getElementById('pchk-'+id+'-'+pid);if(chk)chk.checked=inSplit;
+        const row=document.getElementById('spr-'+id+'-'+pid);if(row)row.classList.toggle('in-split',inSplit);
+        const valEl=document.getElementById('qv-'+id+'-'+pid);if(valEl)valEl.textContent=fmtQty(v);
+        const ctrl=valEl?.closest('.qty-ctrl');if(ctrl)ctrl.querySelector('.qty-btn').disabled=v<=0;
     });
-    renderBadges();renderTotals();renderStats();renderChips();
 }
 
 function renderAll(){renderPeopleTags();renderStats();renderItems();renderTotals();renderChips();}
@@ -1045,13 +992,13 @@ function renderItems(){
         const showDisc=hasDisc&&discScope==='manual',showTip=hasTip&&tipScope==='manual';
         const flags=(showDisc||showTip)?`<div class="item-flags">${showDisc?`<label class="flag-chip disc ${item.applyDiscount?'active':''}"><input type="checkbox" ${item.applyDiscount?'checked':''} onchange="toggleDiscount(${item.id},this.checked)"><svg><use href="#i-tag"/></svg> Desc.</label>`:''} ${showTip?`<label class="flag-chip tip ${item.applyTip?'active':''}"><input type="checkbox" ${item.applyTip?'checked':''} onchange="toggleTip(${item.id},this.checked)"><svg><use href="#i-handshake"/></svg> Prop.</label>`:''}</div>`:'';
         const splitOn = item.splitEq || false;
-        const pRows=people.map(p=>{
+        const pRows=people.map((p,idx)=>{
             const v=item.qty[p]||0, pid=p.replace(/[^a-zA-Z0-9]/g,'_');
-            const inSplit = splitOn && v > 0;
+            const inSplit = splitOn && (item.splitPeople||[]).includes(p);
             return `<div class="split-prow${inSplit?' in-split':''}" id="spr-${item.id}-${pid}">
                 <input type="checkbox" class="person-check" id="pchk-${item.id}-${pid}"
                     ${inSplit?'checked':''}
-                    onchange="togglePersonInSplit(${item.id},'${p.replace(/'/g,"\'")}',this.checked)"
+                    onchange="togglePersonInSplit(${item.id},${idx},this.checked)"
                     onclick="event.stopPropagation()">
                 <span class="split-pname">${esc(p)}</span>
                 <div class="qty-ctrl">
@@ -1063,7 +1010,7 @@ function renderItems(){
         }).join('');
         const panel=people.length?`<div class="assign-panel${splitOn?' split-eq-active':''}" onclick="event.stopPropagation()">
             <div class="split-eq-row" onclick="event.stopPropagation();toggleSplitEq(${item.id})">
-                <input type="checkbox" id="speq-${item.id}" ${item.splitEq?'checked':''} onclick="event.stopPropagation()">
+                <input type="checkbox" id="speq-${item.id}" ${item.splitEq?'checked':''}>
                 <span class="split-eq-label">⚡ Dividir en partes iguales</span>
             </div>
             <div class="split-ppl" id="spp-${item.id}">${pRows}</div>
